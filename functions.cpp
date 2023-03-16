@@ -33,5 +33,7 @@ QByteArray parse(QString user_message) {
             return func_login(data[1], data[2]);
         else
             return wrong_user_message(data);
-    return QByteArray(user_message.toUtf8());
+    else {
+        return QByteArray(user_message.toUtf8());
+    }
 }
