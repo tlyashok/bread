@@ -1,6 +1,7 @@
 #include "mytcpserver.h"
 #include "functions.h"
 
+
 MyTcpServer::~MyTcpServer()
 {
     for (QTcpSocket* s : mTcpSocket)
@@ -8,6 +9,7 @@ MyTcpServer::~MyTcpServer()
     mTcpServer->close();
     serverStatus=0;
 }
+
 MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
     mTcpServer = new QTcpServer(this);
     connect(mTcpServer, &QTcpServer::newConnection,
@@ -40,7 +42,7 @@ void MyTcpServer::slotServerRead(){
         data.append(socket->readAll());
     }
     if (data.size() > 0 && data.back() == '\n') {
-        socket->write(parse(data));
+        socket->write(Functions::getInstance()->parse(data));
         data.clear();
     }
 }

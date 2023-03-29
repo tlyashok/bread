@@ -13,13 +13,13 @@
 #include <QCoreApplication>
 #include <QString>
 
+#include "singleton.h"
 
-class MyTcpServer : public QObject
+
+class MyTcpServer : public QObject, public Singleton <MyTcpServer>
 {
     Q_OBJECT
-public:
-    explicit MyTcpServer(QObject *parent = nullptr);
-    ~MyTcpServer();
+    friend class Singleton<MyTcpServer>;
 public slots:
     void slotNewConnection();
     void slotClientDisconnected();
@@ -27,10 +27,14 @@ public slots:
     void slotServerRead();
     //void slotReadClient();
 private:
+    explicit MyTcpServer(QObject *parent = nullptr);
+    ~MyTcpServer();
     QTcpServer * mTcpServer;
     QMap<int, QTcpSocket*> mTcpSocket;
     int serverStatus;
 };
+
+
 #endif // MYTCPSERVER_H
 
 

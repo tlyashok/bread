@@ -3,7 +3,7 @@
 #include <QByteArray>
 #include "functions.h"
 
-QByteArray wrong_user_message(QStringList data) {
+QByteArray Functions::wrong_user_message(QStringList data) {
 //    return QByteArray("Произошла ошибка!");
     QString s("Переданы неверные аргументы для комманды "+data[0]+": ");
     for (int i = 1; i < data.size(); i++)
@@ -13,16 +13,16 @@ QByteArray wrong_user_message(QStringList data) {
     return QByteArray(s.toUtf8());
 }
 
-QByteArray func_login(QString username, QString password) {
+QByteArray Functions::func_login(QString username, QString password) {
     return QByteArray("Тут должна быть авторизация\r\n");
 }
 
-QByteArray func_register(QString username, QString email, QString password) {
+QByteArray Functions::func_register(QString username, QString email, QString password) {
     return QByteArray("Тут должна быть регистрация\r\n");
 }
 
-QByteArray parse(QString user_message) {
-    QStringList data = user_message.split(' ');
+QByteArray Functions::parse(QString userMessage) {
+    QStringList data = userMessage.split(' ');
     if (data[0] == "register")
         if (data.size() == 4)
             return func_register(data[1], data[2], data[3]);
@@ -34,6 +34,40 @@ QByteArray parse(QString user_message) {
         else
             return wrong_user_message(data);
     else {
-        return QByteArray(user_message.toUtf8());
+        return QByteArray(userMessage.toUtf8());
+    }
+}
+
+QByteArray Functions::get_task(int taskNumber)
+{
+    switch (taskNumber)
+    {
+    case 1:
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    case 5:
+        break;
+    }
+}
+
+QByteArray Functions::check_task(int taskNumber, int taskKey, QString answer)
+{
+    switch (taskNumber)
+    {
+    case 1:
+        break;
+    case 2:
+        break;
+    case 3:
+        break;
+    case 4:
+        break;
+    case 5:
+        break;
     }
 }
