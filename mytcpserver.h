@@ -12,8 +12,9 @@
 
 #include <QCoreApplication>
 #include <QString>
-
-
+///
+/// \brief The MyTcpServer class Класс для сервера
+///
 class MyTcpServer : public QObject
 {
     Q_OBJECT
