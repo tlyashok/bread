@@ -6,6 +6,7 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlDatabase>
+#include <QSqlError>
 
 #include "singleton.h"
 

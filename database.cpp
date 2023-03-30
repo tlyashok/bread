@@ -50,7 +50,7 @@ QString DataBase::db_request(QString request)
     while(query.next()) {
         for (int i = 0; i < record.count(); i++)
         {
-            result.append(query.value(i));
+            result.append(query.value(i).toString());
             if (i != record.count()-1)
                 result.append(", ");
         }

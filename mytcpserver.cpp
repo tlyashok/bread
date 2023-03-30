@@ -1,13 +1,10 @@
 #include "mytcpserver.h"
 #include "functions.h"
-<<<<<<< HEAD
 
-
-=======
 ///
 /// \brief MyTcpServer::~MyTcpServer Деструктор, вызывающий функцию, закрывающую соединение
 ///
->>>>>>> 15297397c8fb95c9313160a48e57c353160982e4
+///
 MyTcpServer::~MyTcpServer()
 {
     for (QTcpSocket* s : mTcpSocket)
@@ -15,14 +12,12 @@ MyTcpServer::~MyTcpServer()
     mTcpServer->close();
     serverStatus=0;
 }
-<<<<<<< HEAD
 
-=======
 ///
 /// \brief MyTcpServer::MyTcpServer Создание объекта класса
 /// \param parent Подключение сигналов и слотов
 ///
->>>>>>> 15297397c8fb95c9313160a48e57c353160982e4
+///
 MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
     mTcpServer = new QTcpServer(this);
     connect(mTcpServer, &QTcpServer::newConnection,
