@@ -16,6 +16,9 @@
 #include "singleton.h"
 
 
+///
+/// \brief The MyTcpServer class Класс для сервера
+///
 class MyTcpServer : public QObject, public Singleton <MyTcpServer>
 {
     Q_OBJECT

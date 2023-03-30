@@ -1,7 +1,13 @@
 #include "mytcpserver.h"
 #include "functions.h"
+<<<<<<< HEAD
 
 
+=======
+///
+/// \brief MyTcpServer::~MyTcpServer Деструктор, вызывающий функцию, закрывающую соединение
+///
+>>>>>>> 15297397c8fb95c9313160a48e57c353160982e4
 MyTcpServer::~MyTcpServer()
 {
     for (QTcpSocket* s : mTcpSocket)
@@ -9,7 +15,14 @@ MyTcpServer::~MyTcpServer()
     mTcpServer->close();
     serverStatus=0;
 }
+<<<<<<< HEAD
 
+=======
+///
+/// \brief MyTcpServer::MyTcpServer Создание объекта класса
+/// \param parent Подключение сигналов и слотов
+///
+>>>>>>> 15297397c8fb95c9313160a48e57c353160982e4
 MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
     mTcpServer = new QTcpServer(this);
     connect(mTcpServer, &QTcpServer::newConnection,
@@ -22,7 +35,9 @@ MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
         qDebug() << "server is started";
     }
 }
-
+///
+/// \brief MyTcpServer::slotNewConnection Создание нового подключения (mTcpSocket)
+///
 void MyTcpServer::slotNewConnection(){
     QTcpSocket* socket = mTcpServer->nextPendingConnection();
     if(serverStatus==1){
@@ -34,7 +49,9 @@ void MyTcpServer::slotNewConnection(){
     }
     mTcpSocket.insert(socket->socketDescriptor(), socket);
 }
-
+///
+/// \brief MyTcpServer::slotServerRead Копирование введённой строки(при подключении к серверу)
+///
 void MyTcpServer::slotServerRead(){
     QTcpSocket* socket = (QTcpSocket*)sender();
     QString data;
@@ -46,7 +63,9 @@ void MyTcpServer::slotServerRead(){
         data.clear();
     }
 }
-
+///
+/// \brief MyTcpServer::slotClientDisconnected Закрытие соединения
+///
 void MyTcpServer::slotClientDisconnected(){
     QTcpSocket* socket = (QTcpSocket*)sender();
     socket->close();

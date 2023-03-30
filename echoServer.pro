@@ -1,6 +1,7 @@
 QT -= gui
 
 QT += network #Для работы с сетью
+QT += sql
 
 
 CONFIG += c++11 console
