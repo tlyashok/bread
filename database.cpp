@@ -7,15 +7,37 @@ bool DataBase::db_created()
 
 void DataBase::create_db()
 {
-    // типы пользователей: 0 - студент, 1 - преподаватель
-
     QSqlQuery query(this->db);
+    /* Создаёт две таблицы:
+     *
+     * Users
+     * -----------------------------------------------
+     * id | user_type | login | password | connection
+     * -----------------------------------------------
+     *    |           |       |          |       |
+     *    |           |       |          |       |
+     *    |           |       |          |       |
+     * -----------------------------------------------
+     *
+     * user_type: 0 - студент, 1 - преподаватель
+     *
+     *
+     * Tasks
+     * --------------------------------------------
+     * id | user_id   | task_id | password | grade
+     * --------------------------------------------
+     *    |           |         |          |
+     *    |           |         |          |
+     *    |           |         |          |
+     * --------------------------------------------
+     *
+     * Tasks.user_id <-> Users.id
+     */
     query.exec("CREATE TABLE Users("
            "id INTEGER PRIMARY KEY, "
            "user_type INT8 NOT NULL, "
            "login VARCHAR(64) NOT NULL, "
            "password VARCHAR(64) NOT NULL, "
-           "email VARCHAR(64) NOT NULL UNIQUE, "
            "connection INTEGER DEFAULT NULL "
            ")");
     query.exec("CREATE TABLE Tasks("
@@ -41,23 +63,61 @@ DataBase::~DataBase()
     db.close();
 }
 
-QString DataBase::db_request(QString request)
+QVector<QMap<QString, QString>> DataBase::db_request(QString request)
 {
     QSqlQuery query(this->db);
     query.exec(request);
     QSqlRecord record = query.record();
-    QString result;
-    while(query.next()) {
-        for (int i = 0; i < record.count(); i++)
-        {
-            result.append(query.value(i).toString());
-            if (i != record.count()-1)
-                result.append(", ");
+    QVector<QString> columns;
+    for (int i = 0; i < record.count(); i++) {
+        QString columnName = record.fieldName(i);
+        columns.append(columnName);
+    }
+    QVector<QMap<QString, QString>> result;
+    if (query.lastError().isValid()) {
+        qDebug() << "Ошибка выполнения запроса:" << query.lastError().text();
+    } else {
+        while (query.next()) {
+            QMap<QString, QString> row;
+            for (int i = 0; i < columns.count(); i++) {
+                QString columnName = query.record().fieldName(i);
+                QString value = query.value(i).toString();
+                row.insert(columnName, value);
+            }
+            result.append(row);
         }
-        if (!query.last())
-            result.append("\n");
     }
     return result;
+}
+
+void DataBase::printTable(const QList<QMap<QString, QString>>& table)
+{
+    const int columnWidth = 15;
+
+    // выводим горизонтальную линию таблицы
+    qDebug().noquote() << QString("-").repeated(columnWidth * table.first().size() + table.first().size() + 1);
+
+    // выводим заголовки столбцов
+    QString header;
+    for (auto& column : table.first().keys()) {
+        header += QString("| %1 ").arg(column.leftJustified(columnWidth, ' '), Qt::AlignHCenter);
+    }
+    qDebug().noquote() << header << "|";
+
+    // выводим горизонтальную линию таблицы
+    qDebug().noquote() << QString("-").repeated(columnWidth * table.first().size() + table.first().size() + 1);
+
+    // выводим строки таблицы
+    for (auto& row : table) {
+        QString rowStr;
+        for (auto& value : row.values()) {
+            rowStr += QString("| %1 ").arg(value.leftJustified(columnWidth, ' '), Qt::AlignHCenter);
+        }
+        qDebug().noquote() << rowStr << "|";
+    }
+
+    // выводим горизонтальную линию таблицы
+    qDebug().noquote() << QString("-").repeated(columnWidth * table.first().size() + table.first().size() + 1);
 }
 
 void DataBase::db_clear()

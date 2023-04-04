@@ -16,7 +16,7 @@ public:
     ///
     bool check_auth(QString login, QString password);
     ///
-    /// \brief reg Регистрация пользователя по логиу и паролю
+    /// \brief reg Регистрация пользователя по логину и паролю
     /// \param login
     /// \param password
     /// \return Проверяет, существует ли такой пользователь

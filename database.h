@@ -7,6 +7,7 @@
 #include <QSqlRecord>
 #include <QSqlDatabase>
 #include <QSqlError>
+#include <QDebug>
 
 #include "singleton.h"
 
@@ -28,11 +29,16 @@ public:
     /// \param request
     /// \return Возвращает ответ
     ///
-    QString db_request(QString request);
+    QVector<QMap<QString, QString>> db_request(QString request);
     ///
     /// \brief db_clear Очищает базу данных
     ///
     void db_clear();
+    ///
+    /// \brief printTable Возвращает в консоль таблицу, полученную через db_request
+    /// \param table
+    ///
+    void printTable(const QVector<QMap<QString, QString>>& table);
 };
 
 #endif // DATABASE_H
