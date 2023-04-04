@@ -27,7 +27,8 @@ public:
     ///
     /// \brief db_request Отправляет запрос в базу данных
     /// \param request
-    /// \return Возвращает ответ
+    /// \return Возвращает ответ в формате вектора записей запроса,
+    /// \return где каждая запись представлена в виде QMap <название стобца : значение столбца>
     ///
     QVector<QMap<QString, QString>> db_request(QString request);
     ///

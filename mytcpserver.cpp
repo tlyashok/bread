@@ -36,7 +36,7 @@ MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
 void MyTcpServer::slotNewConnection(){
     QTcpSocket* socket = mTcpServer->nextPendingConnection();
     if(serverStatus==1){
-        socket->write("Hello, World!!! I am echo server!\r\n");
+        socket->write("Сервер запущен.\r\n");
         connect(socket, &QTcpSocket::readyRead,
                 this,&MyTcpServer::slotServerRead);
         connect(socket,&QTcpSocket::disconnected,
