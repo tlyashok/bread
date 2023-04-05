@@ -4,7 +4,6 @@
 #include "functions.h"
 
 QByteArray Functions::wrong_user_message(QStringList data) {
-//    return QByteArray("Произошла ошибка!");
     QString s("Переданы неверные аргументы для комманды "+data[0]+": ");
     for (int i = 1; i < data.size(); i++)
         s.append(data[i]+", ");
