@@ -13,12 +13,11 @@ int main(int argc, char *argv[])
 
     MyTcpServer *b = MyTcpServer::getInstance();
 
-    DataBase::getInstance()->db_request("insert into Users values(1, 1, 'aaa', 'bbb', NULL)");
+    DBRequests::getInstance()->reg("vasya", "123", 0);
 
-    qDebug() << DBRequests::getInstance()->auth("aaa", "bbb", 1);
+    DBRequests::getInstance()->auth("vasya", "123", 123);
 
-    qDebug() << DBRequests::getInstance()->check_auth(1);
-
+    DBRequests::getInstance()->task_is_done(123,1,123,true);
 
     return a.exec();
 }

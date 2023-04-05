@@ -11,25 +11,25 @@ void DataBase::create_db()
     /* Создаёт две таблицы:
      *
      * Users
-     * -----------------------------------------------
-     * id | user_type | login | password | connection
-     * -----------------------------------------------
+     * --------------------------------------------------
+     * id | user_type | login | password | connection_id
+     * --------------------------------------------------
      *    |           |       |          |       |
      *    |           |       |          |       |
      *    |           |       |          |       |
-     * -----------------------------------------------
+     * --------------------------------------------------
      *
      * user_type: 0 - студент, 1 - преподаватель
      *
      *
-     * Tasks
-     * --------------------------------------------
-     * id | user_id   | task_id | password | grade
-     * --------------------------------------------
-     *    |           |         |          |
-     *    |           |         |          |
-     *    |           |         |          |
-     * --------------------------------------------
+    * Tasks
+    * ----------------------------------------------------
+    * id | user_id   | task_id | task_number | is_correct
+    * ----------------------------------------------------
+    *    |           |         |             |
+    *    |           |         |             |
+    *    |           |         |             |
+    * ----------------------------------------------------
      *
      * Tasks.user_id <-> Users.id
      */
@@ -38,13 +38,14 @@ void DataBase::create_db()
            "user_type INT8 NOT NULL, "
            "login VARCHAR(64) NOT NULL, "
            "password VARCHAR(64) NOT NULL, "
-           "connection INTEGER DEFAULT NULL "
+           "connection_id INTEGER DEFAULT NULL "
            ")");
     query.exec("CREATE TABLE Tasks("
           "id INTEGER PRIMARY KEY, "
            "user_id INTEGER NOT NULL, "
            "task_id INTEGER NOT NULL, "
-           "grade INT8 DEFAULT NULL"
+           "task_number INTEGER NOT NULL, "
+           "is_correct BOOLEAN DEFAULT NULL"
            ")");
 }
 

@@ -1,6 +1,29 @@
 #include "dbrequests.h"
 
 
+/*
+* Users
+* --------------------------------------------------
+* id | user_type | login | password | connection_id
+* --------------------------------------------------
+*    |           |       |          |       |
+*    |           |       |          |       |
+*    |           |       |          |       |
+* --------------------------------------------------
+*
+* user_type: 0 - студент, 1 - преподаватель
+*
+*
+* Tasks
+* ----------------------------------------------------
+* id | user_id   | task_id | task_number | is_correct
+* ----------------------------------------------------
+*    |           |         |             |
+*    |           |         |             |
+*    |           |         |             |
+* ----------------------------------------------------
+*/
+
 bool DBRequests::auth(QString login, QString password, int userKey)
 {
     // Сперва находим в базе данных пользователя с соответствующим логином и паролем.
@@ -19,15 +42,15 @@ bool DBRequests::auth(QString login, QString password, int userKey)
      * если да и он не совпадает с нашим, то авторизация не успешна,
      * если нет, то присваиваем ему userKey и сообщаем, что авторизация успешна. */
     } else {
-        if (answer[0]["connection"] != "NULL" and answer[0]["connection"] == QString::number(userKey)) {
+        if (answer[0]["connection_id"] != "" and answer[0]["connection_id"] == QString::number(userKey)) {
             return true;
-        } else if (answer[0]["connection"] != "NULL" and answer[0]["connection"] != QString::number(userKey)) {
+        } else if (answer[0]["connection_id"] != "" and answer[0]["connection_id"] != QString::number(userKey)) {
             return false;
-        } else if (answer[0]["connection"] == "NULL") {
+        } else if (answer[0]["connection_id"] == "") {
             DataBase::getInstance()->db_request(
-                            QString("UPDATE Users"
-                                    "SET connection = %1"
-                                    "WHERE login = '%2' and password = '%3'").arg(QString::number(userKey), login, password));
+                            QString("update Users "
+                                    "set connection_id = %1 "
+                                    "where login = '%2' and password = '%3'").arg(QString::number(userKey), login, password));
             return true;
         }
     }
@@ -40,7 +63,7 @@ bool DBRequests::check_auth(int userKey)
     // Ищем авторизированных пользователей с данным подключением.
     QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
                 QString("select * from Users "
-                        "where connection = %1").arg(userKey));
+                        "where connection_id = %1").arg(QString::number(userKey)));
     // Если таких пользователей нет, то авторизация не пройдена.
     if (answer.size() == 0) {
         return false;
@@ -56,11 +79,39 @@ bool DBRequests::check_auth(int userKey)
     throw;
 }
 
-/*
-bool DBRequests::reg(QString login, QString password, int UserKey)
+
+bool DBRequests::reg(QString login, QString password, int userType)
 {
     QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
-                QString("select * from Users where login = '%1'").arg(login));
+                QString("select * from Users "
+                        "where login = '%1'").arg(login));
+    // Если данный логин найден в базе данных, значит он занят.
+    if (answer.size() != 0) {
+        return false;
+    // Добавляем нового пользователя в базу данных.
+    } else {
+        DataBase::getInstance()->db_request(QString("insert into Users(user_type,login, password) "
+                                                    "values (%1, '%2', '%3')").arg(QString::number(userType), login, password));
+        return true;
+    }
 
 }
-*/
+
+void DBRequests::reset_connections()
+{
+    // Удаляет дескрипторы соединений для всех пользователей.
+    DataBase::getInstance()->db_request(QString("update Users "
+                                                "set connection_id = null"));
+}
+
+void DBRequests::task_is_done(int userKey, int taskNumber, int taskKey, bool isCorrect)
+{
+    QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
+                QString("select id from Users where connection_id = %1").arg(QString::number(userKey)));
+    QString userId = answer[0]["id"];
+    DataBase::getInstance()->db_request(QString("insert into Tasks(user_id, task_id, task_number, is_correct) "
+                                                "values(%1, %2, %3, %4)").arg
+                                        (userId, QString::number(taskKey),
+                                         QString::number(taskNumber), QString::number(isCorrect)));
+}
+
