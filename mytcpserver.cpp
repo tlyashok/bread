@@ -1,10 +1,7 @@
 #include "mytcpserver.h"
 #include "functions.h"
 
-///
-/// \brief MyTcpServer::~MyTcpServer Деструктор, вызывающий функцию, закрывающую соединение
-///
-///
+
 MyTcpServer::~MyTcpServer()
 {
     for (QTcpSocket* s : mTcpSocket)
@@ -13,11 +10,7 @@ MyTcpServer::~MyTcpServer()
     serverStatus=0;
 }
 
-///
-/// \brief MyTcpServer::MyTcpServer Создание объекта класса
-/// \param parent Подключение сигналов и слотов
-///
-///
+
 MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
     mTcpServer = new QTcpServer(this);
     connect(mTcpServer, &QTcpServer::newConnection,
@@ -30,9 +23,7 @@ MyTcpServer::MyTcpServer(QObject *parent) : QObject(parent){
         qDebug() << "server is started";
     }
 }
-///
-/// \brief MyTcpServer::slotNewConnection Создание нового подключения (mTcpSocket)
-///
+
 void MyTcpServer::slotNewConnection(){
     QTcpSocket* socket = mTcpServer->nextPendingConnection();
     if(serverStatus==1){
@@ -44,9 +35,7 @@ void MyTcpServer::slotNewConnection(){
     }
     mTcpSocket.insert(socket->socketDescriptor(), socket);
 }
-///
-/// \brief MyTcpServer::slotServerRead Копирование введённой строки(при подключении к серверу)
-///
+
 void MyTcpServer::slotServerRead(){
     QTcpSocket* socket = (QTcpSocket*)sender();
     QString data;
@@ -58,9 +47,7 @@ void MyTcpServer::slotServerRead(){
         data.clear();
     }
 }
-///
-/// \brief MyTcpServer::slotClientDisconnected Закрытие соединения
-///
+
 void MyTcpServer::slotClientDisconnected(){
     QTcpSocket* socket = (QTcpSocket*)sender();
     socket->close();

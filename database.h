@@ -14,11 +14,20 @@ class DataBase : public Singleton<DataBase>
 {
     friend class Singleton<DataBase>;
 private:
+    ///
+    /// \brief DataBase Конструктор, задаются имя БД и язык
+    ///
     DataBase();
     DataBase(const DataBase& ) = delete;
     DataBase& operator = (DataBase &) = delete;
+    ///
+    /// \brief ~DataBase Деструктор, закрытие БД
+    ///
     ~DataBase();
     QSqlDatabase db;
+    ///
+    /// \brief create_db Создание таблиц Users и Tasks
+    ///
     bool db_created();
     void create_db();
 
