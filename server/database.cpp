@@ -2,7 +2,7 @@
 
 bool DataBase::db_created()
 {
-    return this->db.tables() == QStringList{"Tasks", "Users"};
+    return this->db.tables() == QStringList{"Tasks", "Users", "UserGroups"};
 }
 
 void DataBase::create_db()
@@ -14,24 +14,35 @@ void DataBase::create_db()
      * --------------------------------------------------
      * id | user_type | login | password | connection_id
      * --------------------------------------------------
-     *    |           |       |          |       |
-     *    |           |       |          |       |
-     *    |           |       |          |       |
+     *    |           |       |          |
+     *    |           |       |          |
+     *    |           |       |          |
      * --------------------------------------------------
      *
      * user_type: 0 - студент, 1 - преподаватель
      *
-     *
-    * Tasks
-    * ----------------------------------------------------
-    * id | user_id   | task_id | task_number | is_correct
-    * ----------------------------------------------------
-    *    |           |         |             |
-    *    |           |         |             |
-    *    |           |         |             |
-    * ----------------------------------------------------
+     * Tasks
+     * -------------------------------------------------------------
+     * id | user_id   | task_id | task_number | answer | is_correct
+     * -------------------------------------------------------------
+     *    |           |         |             |        |
+     *    |           |         |             |        |
+     *    |           |         |             |        |
+     * -------------------------------------------------------------
      *
      * Tasks.user_id <-> Users.id
+     *
+     * UserGroups
+     * ---------------
+     * id | student_id
+     * ---------------
+     *    |
+     *    |
+     *    |
+     * ---------------
+     *
+     * UserGroups.student_id <-> Users.id
+     *
      */
     query.exec("CREATE TABLE Users("
            "id INTEGER PRIMARY KEY, "
@@ -45,7 +56,12 @@ void DataBase::create_db()
            "user_id INTEGER NOT NULL, "
            "task_id INTEGER NOT NULL, "
            "task_number INTEGER NOT NULL, "
+           "answer TEXT,"
            "is_correct BOOLEAN DEFAULT NULL"
+           ")");
+    query.exec("CREATE TABLE UserGroups("
+          "id INTEGER PRIMARY KEY, "
+           "user_id INTEGER NOT NULL"
            ")");
 }
 
@@ -59,7 +75,7 @@ DataBase::DataBase()
     if (!(this->db.open()))
         qDebug()<<db.lastError().text();
 
-    // Если нет таблиц Users, Tasks, то создаем их
+    // Если нет таблиц Users, Tasks, UserGroups, то создаем их
     if (!this->db_created())
         this->create_db();
 }
@@ -139,4 +155,5 @@ void DataBase::db_clear()
     QSqlQuery query(this->db);
     query.exec("DELETE FROM TABLE Users");
     query.exec("DELETE FROM TABLE Tasks");
+    query.exec("DELETE FROM TABLE UserGroups");
 }
