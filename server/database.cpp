@@ -34,7 +34,7 @@ void DataBase::create_db()
      *
      * UserGroups
      * ---------------
-     * id | student_id
+     * id | user_id
      * ---------------
      *    |
      *    |
@@ -60,7 +60,7 @@ void DataBase::create_db()
            "is_correct BOOLEAN DEFAULT NULL"
            ")");
     query.exec("CREATE TABLE UserGroups("
-          "id INTEGER PRIMARY KEY, "
+          "id INTEGER KEY, "
            "user_id INTEGER NOT NULL"
            ")");
 }

@@ -43,7 +43,9 @@ void MyTcpServer::slotServerRead(){
         data.append(socket->readAll());
     }
     if (data.size() > 0 && data.back() == '\n') {
+        data = QString::number(socket->socketDescriptor()) + " " + data;
         socket->write(Functions::getInstance()->parse(data));
+        qDebug() << data;
         data.clear();
     }
 }

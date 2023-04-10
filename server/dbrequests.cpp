@@ -1,28 +1,42 @@
 #include "dbrequests.h"
 
 
-/*
-* Users
-* --------------------------------------------------
-* id | user_type | login | password | connection_id
-* --------------------------------------------------
-*    |           |       |          |
-*    |           |       |          |
-*    |           |       |          |
-* --------------------------------------------------
-*
-* user_type: 0 - студент, 1 - преподаватель
-* если нет соединения, то connection_id = Null
-*
-* Tasks
-* ----------------------------------------------------
-* id | user_id   | task_id | task_number | is_correct
-* ----------------------------------------------------
-*    |           |         |             |
-*    |           |         |             |
-*    |           |         |             |
-* ----------------------------------------------------
-*/
+/* Создаёт две таблицы:
+ *
+ * Users
+ * --------------------------------------------------
+ * id | user_type | login | password | connection_id
+ * --------------------------------------------------
+ *    |           |       |          |
+ *    |           |       |          |
+ *    |           |       |          |
+ * --------------------------------------------------
+ *
+ * user_type: 0 - студент, 1 - преподаватель
+ *
+ * Tasks
+ * -------------------------------------------------------------
+ * id | user_id   | task_id | task_number | answer | is_correct
+ * -------------------------------------------------------------
+ *    |           |         |             |        |
+ *    |           |         |             |        |
+ *    |           |         |             |        |
+ * -------------------------------------------------------------
+ *
+ * Tasks.user_id <-> Users.id
+ *
+ * UserGroups
+ * ---------------
+ * id | user_id
+ * ---------------
+ *    |
+ *    |
+ *    |
+ * ---------------
+ *
+ * UserGroups.student_id <-> Users.id
+ *
+ */
 
 bool DBRequests::auth(QString login, QString password, int userKey)
 {
@@ -80,7 +94,7 @@ bool DBRequests::check_auth(int userKey)
 }
 
 
-bool DBRequests::reg(QString login, QString password, int userType)
+bool DBRequests::reg(QString login, QString password, int userType, QString loginTeacher)
 {
     QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
                 QString("select * from Users "
@@ -92,6 +106,23 @@ bool DBRequests::reg(QString login, QString password, int userType)
     } else {
         DataBase::getInstance()->db_request(QString("insert into Users(user_type,login, password) "
                                                     "values (%1, '%2', '%3')").arg(QString::number(userType), login, password));
+        QVector<QMap<QString, QString>> current_user =
+                DataBase::getInstance()->db_request(QString("select * from Users "
+                                                            "where login = '%1' and password = '%2'").arg(login, password));
+        if (userType == 1) {
+            QVector<QMap<QString, QString>> teacher =
+                    DataBase::getInstance()->db_request(QString("select * from Users "
+                                                                "where login = '%1' and password = '%2'").arg(login, password));
+            DataBase::getInstance()->db_request(QString("insert into UserGroups "
+                                                        "values(%1, %2)").arg(teacher[0]["id"],current_user[0]["id"]));
+        } else {
+            QVector<QMap<QString, QString>> teacher =
+                    DataBase::getInstance()->db_request(QString("select * from Users "
+                                                                "where login = '%1'").arg(loginTeacher));
+            DataBase::getInstance()->db_request(QString("insert into UserGroups "
+                                                        "values(%1, %2)").arg(teacher[0]["id"], current_user[0]["id"]));
+        }
+
         return true;
     }
 
@@ -113,5 +144,42 @@ void DBRequests::task_is_done(int userKey, int taskNumber, int taskKey, bool isC
                                                 "values(%1, %2, %3, %4)").arg
                                         (userId, QString::number(taskKey),
                                          QString::number(taskNumber), QString::number(isCorrect)));
+}
+
+bool DBRequests::user_logout(QString login, QString password)
+{
+    QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
+                QString("select * "
+                        "from Users "
+                        "where login = '%1' and password = '%2'").arg(login, password));
+
+    if (answer.size() == 0) {
+        qDebug() << "Пользователь не найден.";
+        return false;
+    } else {
+        DataBase::getInstance()->db_request(
+                 QString("update Users "
+                         "set connection_id = null"
+                         "where login = '%1' and password = '%2'").arg(login, password));
+        return true;
+    }
+}
+
+bool DBRequests::del_group(QString loginTeacher)
+{
+    QVector<QMap<QString, QString>> teacher =
+            DataBase::getInstance()->db_request(QString("select * from Users "
+                                                        "where login = '%1'").arg(loginTeacher));
+    if (teacher.size() == 0) {
+        qDebug() << "Группа не найдена.";
+        return false;
+    } else if (teacher.size() > 1) {
+        qDebug() << "Ошибка. Несколько преподавателей с одинаковым логином.";
+        return false;
+    } else {
+        DataBase::getInstance()->db_request(QString("delete from Users "
+                                                    "where id = %1").arg(teacher[0]["id"]));
+        return true;
+    }
 }
 
