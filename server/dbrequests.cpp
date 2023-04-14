@@ -49,8 +49,8 @@ bool DBRequests::auth(QString login, QString password, int userKey)
         return false;
     // Если таких пользователей (строк в базе данных) больше одного, то что-то пошло не так.
     } else if (answer.size() > 1) {
-        qDebug() << "Ошибка. Пользователей с данным логином и паролем больше одного.";
-        throw;
+        qDebug() << "Ошибка. Пользователей с данным логином и паролем больше одного." << '\n';
+        return false;
     /* Проверяем присвоен ли текущему пользователю дескриптор,
      * если да и он совпадает с нашим, то авторизация успешна,
      * если да и он не совпадает с нашим, то авторизация не успешна,
@@ -68,8 +68,8 @@ bool DBRequests::auth(QString login, QString password, int userKey)
             return true;
         }
     }
-    qDebug() << "Что-то пошло не так.";
-    throw;
+    qDebug() << "Что-то пошло не так." << '\n';
+    return false;
 }
 
 bool DBRequests::check_auth(int userKey)
@@ -83,14 +83,14 @@ bool DBRequests::check_auth(int userKey)
         return false;
     // Если таких пользователей (строк в базе данных) больше одного, то что-то пошло не так.
     } else if (answer.size() > 1) {
-        qDebug() << "Ошибка. Пользователей с данным подключением больше одного.";
-        throw;
+        qDebug() << "Ошибка. Пользователей с данным подключением больше одного." << '\n';
+        return false;
     // Если такой пользователь один, то авторизация успешна.
     } else {
         return true;
     }
-    qDebug() << "Что-то пошло не так.";
-    throw;
+    qDebug() << "Что-то пошло не так." << '\n';
+    return false;
 }
 
 
@@ -154,7 +154,7 @@ bool DBRequests::user_logout(QString login, QString password)
                         "where login = '%1' and password = '%2'").arg(login, password));
 
     if (answer.size() == 0) {
-        qDebug() << "Пользователь не найден.";
+        qDebug() << "Пользователь не найден." << '\n';
         return false;
     } else {
         DataBase::getInstance()->db_request(
@@ -171,15 +171,105 @@ bool DBRequests::del_group(QString loginTeacher)
             DataBase::getInstance()->db_request(QString("select * from Users "
                                                         "where login = '%1'").arg(loginTeacher));
     if (teacher.size() == 0) {
-        qDebug() << "Группа не найдена.";
+        qDebug() << "Группа не найдена." << '\n';
         return false;
     } else if (teacher.size() > 1) {
-        qDebug() << "Ошибка. Несколько преподавателей с одинаковым логином.";
+        qDebug() << "Ошибка. Несколько преподавателей с одинаковым логином." << '\n';
         return false;
     } else {
         DataBase::getInstance()->db_request(QString("delete from Users "
                                                     "where id = %1").arg(teacher[0]["id"]));
         return true;
     }
+}
+
+bool DBRequests::is_it_a_teacher(int userKey)
+{
+    QVector<QMap<QString, QString>> current_user =
+            DataBase::getInstance()->db_request(
+                QString("select user_type from Users "
+                        "where connection_id = %1").arg(QString::number(userKey)));
+    if (current_user.size() == 0) {
+        qDebug() << "Данный пользователь не найден." << '\n';
+        return false;
+    } else if (current_user[0]["user_type"] == "0") {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+QStringList DBRequests::get_students_list(int userKey)
+{
+   QVector<QMap<QString, QString>> studentList =
+           DataBase::getInstance()->db_request(
+               QString("select login from "
+                       "Users as s1 "
+                       "left join "
+                       "UserGroups as s2 "
+                       "on s1.id = s2.user_id "
+                       "where s2.id = "
+                       "(select id from Users where connection_id = %1)").arg(QString::number(userKey)));
+   QStringList answer;
+   for (int i = 0; i < studentList.size();i++) {
+       answer.push_back(studentList[i]["login"]);
+   }
+   return answer;
+}
+
+QString DBRequests::get_statistics(int userKey, QString studentLogin, int taskNumber)
+{
+    QVector<QMap<QString, QString>> checkAccess =
+            DataBase::getInstance()->db_request(
+                QString("select connection_id from Users "
+                        "where id = "
+                        "(select s2.id from "
+                        "Users as s1 "
+                        "left join "
+                        "UserGroups as s2 "
+                        "on s1.id = s2.user_id "
+                        "where login = '%1') limit 1").arg(studentLogin));
+    if (checkAccess.size()==0) {
+        qDebug() << "Что-то пошло не так." << '\n';
+        return "";
+    } else if (checkAccess[0]["connection_id"] == QString::number(userKey)) {
+        QVector<QMap<QString, QString>> studentTasks =
+                DataBase::getInstance()->db_request(
+                    QString("select s1.task_id, s1.is_correct from "
+                            "Tasks as s1 "
+                            "left join "
+                            "Users as s2 "
+                            "on s1.user_id = s2.id "
+                            "where s2.login = '%1' and "
+                            "s1.task_number = %2").arg(studentLogin, QString::number(taskNumber)));
+        int correctAnswers = 0;
+        int wrongAnswers = 0;
+        QStringList wrongAnswerTasks;
+        for (int i = 0; i < studentTasks.size(); i++) {
+            if (studentTasks[i]["is_correct"] == "1") {
+                correctAnswers++;
+            } else {
+                wrongAnswers++;
+            }
+        }
+        for (int i = 0; i < studentTasks.size(); i++) {
+            if (studentTasks[i]["is_correct"] == "0") {
+                wrongAnswerTasks.push_back(studentTasks[i]["task_id"]);
+            }
+        }
+        QString answer;
+        answer = QString::number(correctAnswers) + "$" + QString::number(wrongAnswers);
+        for (int i = 0; i < wrongAnswerTasks.size(); i++) {
+            answer += "$";
+            answer += wrongAnswerTasks[i];
+        }
+        return answer;
+    } else {
+        qDebug() << "Доступ запрещён." << '\n';
+        return "";
+    }
+
+
+
 }
 

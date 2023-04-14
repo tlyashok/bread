@@ -90,6 +90,26 @@ public:
     /// \return 1 - успешно, 0 - группа не найдена
     ///
     QByteArray del_group(QString loginTeacher);
+    ///
+    /// \brief is_it_a_teacher Проверка на аккаунт преподавателя
+    /// \return Возвращает true, если запрос идёт от преподавателя
+    ///
+    QByteArray is_it_a_teacher(int userKey);
+    ///
+    /// \brief get_students_list Если запрос идёт от преподавателя, вернуть список логинов его студентов
+    /// \param userKey Дескриптор подключения
+    /// \return
+    ///
+    QByteArray get_students_list(int userKey);
+    ///
+    /// \brief get_statistics Если запрос идёт от преподавателя группы в которой состоит ученик,
+    /// возвращает статистику по заданию ученика
+    /// \param studentLogin
+    /// \param taskNumber
+    /// \param userKey
+    /// \return [количество верных попыток]$[количество неверных попыток]$[номера вариантов последних двадцати неверных попыток с разделителем $]
+    ///
+    QByteArray get_statistics(int userKey, QString studentLogin, int taskNumber);
 };
 
 
