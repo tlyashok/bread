@@ -13,11 +13,12 @@ taskForm::~taskForm()
     delete ui;
 }
 
-void taskForm::selectTask(int task)
+void taskForm::selectTask(int task, int seed)
 {
     this->task = task;
-    this->seed = 666; // надо отсылать запрос к DB для получения сида
+    this->seed = seed; // надо отсылать запрос к DB для получения сида
     this->ui->label_task_number->setText("Номер задания: "+QString::number(this->task));
+    this->ui->label_task_seed->setText("Вариант задания: "+QString::number(this->seed));
 }
 
 void taskForm::on_pushButton_send_clicked()

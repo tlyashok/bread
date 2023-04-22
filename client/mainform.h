@@ -12,7 +12,18 @@ class mainForm : public QWidget
     Q_OBJECT
 
 signals:
+    ///
+    /// \brief exit
+    ///
+    /// Вызывает закрытие программы.
+    ///
     void exit();
+    ///
+    /// \brief selectTask
+    /// \param task
+    ///
+    /// Вызвывет выбор задания и переход к taskForm.
+    ///
     void selectTask(int task);
 
 public:

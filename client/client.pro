@@ -10,15 +10,15 @@ CONFIG += c++17
 
 SOURCES += \
     authform.cpp \
+    client.cpp \
     main.cpp \
     mainform.cpp \
-    mainwindow.cpp \
     taskform.cpp
 
 HEADERS += \
     authform.h \
+    client.h \
     mainform.h \
-    mainwindow.h \
     taskform.h
 
 # Default rules for deployment.

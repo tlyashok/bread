@@ -16,9 +16,23 @@ public:
     ~taskForm();
 
 public slots:
-    void selectTask(int task);
+    ///
+    /// \brief selectTask
+    /// \param task
+    ///
+    /// Принимает информацию о задании.
+    ///
+    void selectTask(int task, int seed);
 
 signals:
+    ///
+    /// \brief sendAnswer
+    /// \param task
+    /// \param seed
+    /// \param answer
+    ///
+    /// Отправляет ответ на задание.
+    ///
     void sendAnswer(int task, int seed, QString answer);
 
 private slots:
@@ -26,6 +40,15 @@ private slots:
 
 private:
     Ui::taskForm *ui;
+    ///
+    /// \brief task
+    ///
+    /// Номер задания.
+    ///
+    /// \brief seed
+    ///
+    /// Сид задания.
+    ///
     int task, seed;
 };
 
