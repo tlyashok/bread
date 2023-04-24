@@ -13,12 +13,15 @@ SOURCES += \
     client.cpp \
     main.cpp \
     mainform.cpp \
+    singleclient.cpp \
     taskform.cpp
 
 HEADERS += \
     authform.h \
     client.h \
     mainform.h \
+    singleclient.h \
+    singleton.h \
     taskform.h
 
 # Default rules for deployment.
