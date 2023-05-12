@@ -37,9 +37,10 @@ void Client::auth(QString login, QString password)
     SingletonClient::getInstance()->sendToServer("auth " + login + " " + password + "\n");
 }
 
-void Client::reg(QString login, QString password, QString  email)
+void Client::reg(QString login, QString password, bool studentOrTeacher, QString teacherCode)
 {
-    SingletonClient::getInstance()->sendToServer("reg " + login + " " + password + " " + email + "\n");
+    // Если тип учетной записи - преподаватель, то teacherCode пустой, это может вызвать ошибку на сервере
+    SingletonClient::getInstance()->sendToServer("reg " + login + " " + password + " " + QString::number(int(studentOrTeacher)) + " " + teacherCode + "\n");
 }
 
 void Client::exit()

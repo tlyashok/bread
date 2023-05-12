@@ -8,18 +8,16 @@ authForm::authForm(QWidget *parent) :
 {
     ui->setupUi(this);
     this->authOrReg = false;
-    this->setAuthOrReg();
+    this->studentOrTeacher = false;
+    this->uiReset();
 }
-
 authForm::~authForm()
 {
     delete ui;
 }
 
-void authForm::setAuthOrReg()
+void authForm::uiReset()
 {
-    this->ui->label_email->setVisible(this->authOrReg);
-    this->ui->lineEdit_email->setVisible(this->authOrReg);
     if (this->authOrReg)
     {
         this->ui->pushButton_auth_or_reg->setText("Зарегистрироваться");
@@ -29,13 +27,19 @@ void authForm::setAuthOrReg()
     {
         this->ui->pushButton_auth_or_reg->setText("Авторизоваться");
         this->ui->pushButton_switch->setText("Перейти к регистрации");
-
     }
+    if (this->studentOrTeacher)
+        this->ui->pushButton_regtype->setText("Преподаватель");
+    else
+        this->ui->pushButton_regtype->setText("Студент");
+    this->ui->pushButton_regtype->setVisible(this->authOrReg);
+    this->ui->label_teacher_code->setVisible(this->authOrReg && !this->studentOrTeacher);
+    this->ui->lineEdit_teacher_code->setVisible(this->authOrReg && !this->studentOrTeacher);
 }
 void authForm::on_pushButton_switch_clicked()
 {
     this->authOrReg = !this->authOrReg;
-    this->setAuthOrReg();
+    this->uiReset();
 }
 
 
@@ -44,8 +48,14 @@ void authForm::on_pushButton_auth_or_reg_clicked()
     if(this->authOrReg)
         emit this->reg(this->ui->lineEdit_login->text(),
                        this->ui->lineEdit_password->text(),
-                       this->ui->lineEdit_email->text());
+                       this->studentOrTeacher,
+                       this->ui->lineEdit_teacher_code->text());
     emit this->auth(this->ui->lineEdit_login->text(),
                    this->ui->lineEdit_password->text());
 }
 
+void authForm::on_pushButton_regtype_clicked()
+{
+    this->studentOrTeacher = !this->studentOrTeacher;
+    this->uiReset();
+}
