@@ -65,11 +65,12 @@ private slots:
     /// \brief reg
     /// \param login
     /// \param password
-    /// \param email
+    /// \param studentOrTeacher
+    /// \param teacherCode
     ///
     /// Принимает сигнал из authForm, отправляет запрос регистрации на сервер.
     ///
-    void reg(QString login, QString password, QString email);
+    void reg(QString login, QString password, bool studentOrTeacher, QString teacherCode);
     ///
     /// \brief exit
     ///

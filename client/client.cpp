@@ -34,9 +34,10 @@ void Client::auth(QString login, QString password)
     this->qsw->setCurrentIndex(1);
 }
 
-void Client::reg(QString login, QString password, QString email)
+void Client::reg(QString login, QString password, bool studentOrTeacher, QString teacherCode)
 {
-    qDebug() << "reg " << login << " " << password << " " << email << "\n";
+    // Если тип учетной записи - преподаватель, то teacherCode пустой, это может вызвать ошибку на сервере
+    qDebug() << "reg " << login << " " << password << " " << studentOrTeacher << " " << teacherCode << "\n";
 }
 
 void Client::exit()

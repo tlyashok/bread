@@ -35,7 +35,7 @@ signals:
     /// Вызывается при нажатии на кнопку регистрации.
     /// Принимается в классе Client
     ///
-    void reg(QString login, QString password, QString email);
+    void reg(QString login, QString password, bool studentOrTeacher, QString teacherCode);
 
 public:
     explicit authForm(QWidget *parent = nullptr);
@@ -46,14 +46,16 @@ private slots:
 
     void on_pushButton_auth_or_reg_clicked();
 
+    void on_pushButton_regtype_clicked();
+
 private:
     ///
-    /// \brief setAuthOrReg
+    /// \brief uiReset
     ///
     /// Изменяет видимость кнопок и полей в зависимости от
     /// того, что происходит: регистрация или авторизация
     ///
-    void setAuthOrReg();
+    void uiReset();
 
 private:
     Ui::authForm *ui;
@@ -64,6 +66,13 @@ private:
     /// или регистрация
     ///
     bool authOrReg;
+    ///
+    /// \brief studentOrTeacher
+    ///
+    /// Хранит тип учетной записи при регистрации:
+    /// Студенти или Преподаватель
+    ///
+    bool studentOrTeacher;
 };
 
 #endif // AUTHFORM_H

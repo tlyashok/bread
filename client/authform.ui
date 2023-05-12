@@ -70,17 +70,24 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_email">
+      <widget class="QLabel" name="label_teacher_code">
        <property name="text">
-        <string>Email</string>
+        <string>Код преподавателя</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="lineEdit_email"/>
+      <widget class="QLineEdit" name="lineEdit_teacher_code"/>
      </item>
      <item row="2" column="2">
       <widget class="QPushButton" name="pushButton_auth_or_reg">
+       <property name="text">
+        <string>PushButton</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="pushButton_regtype">
        <property name="text">
         <string>PushButton</string>
        </property>
