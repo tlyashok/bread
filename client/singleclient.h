@@ -12,7 +12,7 @@
 class SingletonClient : public QObject, public Singleton<SingletonClient>
 {
     friend class Singleton<SingletonClient>;
-    Q_OBJECT;
+    Q_OBJECT
 private:
     QTcpSocket* socket;
     ///
@@ -22,7 +22,6 @@ private:
     ///
     /// \brief ~SingletonClient Деструктор
     ///
-    ~SingletonClient();
     SingletonClient(SingletonClient&) = delete;
     SingletonClient& operator=(SingletonClient&) = delete;
 
@@ -32,12 +31,19 @@ public:
     /// \return
     ///
     bool sendToServer(QString);
+    ~SingletonClient();
 
 private slots:
     ///
     /// \brief slot_readFromServer Принятие сообщение с сервера
     ///
     void slot_readFromServer();
+
+signals:
+    ///
+    /// \brief taskArrived Сигнал о прибытии задания
+    ///
+    void serverAnswer(QString);
 
 };
 

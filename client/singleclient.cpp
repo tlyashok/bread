@@ -19,6 +19,7 @@ void SingletonClient::slot_readFromServer()
     while(socket->bytesAvailable()>0) {
         data.append(socket->readAll());
     }
+    emit this->serverAnswer(data);
     qDebug() << data;
 }
 

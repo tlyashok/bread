@@ -1,4 +1,5 @@
 #include "client.h"
+#include "singleclient.h"
 
 Client::Client(QWidget* parent)
     : QMainWindow(parent)
@@ -14,6 +15,7 @@ Client::Client(QWidget* parent)
     connect(mf, mf->selectTask, this, this->selectTask);
     connect(this, this->selectTaskGenerated, tf, tf->selectTask);
     connect(tf, tf->sendAnswer, this, this->sendAnswer);
+    connect(SingletonClient::getInstance(), &SingletonClient::serverAnswer, this, this->parser);
 
     this->qsw->addWidget(this->af);
     this->qsw->addWidget(this->mf);
@@ -30,32 +32,59 @@ Client::~Client()
 
 void Client::auth(QString login, QString password)
 {
-    qDebug() << "auth " << login << " " << password << "\n";
-    this->qsw->setCurrentIndex(1);
+    user_login = login;
+    user_pass = password;
+    SingletonClient::getInstance()->sendToServer("auth " + login + " " + password + "\n");
 }
 
-void Client::reg(QString login, QString password, QString email)
+void Client::reg(QString login, QString password, QString  email)
 {
-    qDebug() << "reg " << login << " " << password << " " << email << "\n";
+    SingletonClient::getInstance()->sendToServer("reg " + login + " " + password + " " + email + "\n");
 }
 
 void Client::exit()
 {
-    // TODO: отрубить соединение с сервером и послать запрос о выходе пользователя в DB
+    if (auth_stat)
+        SingletonClient::getInstance()->sendToServer("user_logout " + user_login + " " + user_pass + "\n");
+    SingletonClient::getInstance()->~SingletonClient();
     this->close();
 }
 
 void Client::selectTask(int task)
 {
-    // Нужно получить с сервера сид
-    qDebug() << "get_task " << task << "\n";
-    emit this->selectTaskGenerated(task, task * 1234 /* это просто пример */);
-    this->qsw->setCurrentIndex(2);
+    SingletonClient::getInstance()->sendToServer("get_task " + QString::number(task) + "\n");
 }
 
 void Client::sendAnswer(int task, int seed, QString answer)
 {
-    qDebug() << "task " << task << " " << seed << " " << answer << "\n";
-    // отправить ответ на сервер на проверку
+    SingletonClient::getInstance()->sendToServer("task " + QString::number(task) + " " + QString::number(seed) + " " + answer + "\n");
     this->qsw->setCurrentIndex(1);
+}
+
+void Client::authVer(int result)
+{
+    if (result == 1)
+    {
+        this->qsw->setCurrentIndex(1);
+        auth_stat = true;
+    }
+}
+
+void Client::selectTaskVer(int task, int seed, QString task_text)
+{
+    emit this->selectTaskGenerated(task, seed, task_text);
+    this->qsw->setCurrentIndex(2);
+}
+
+void Client::parser(QString serv_answer)
+{
+    QStringList data = serv_answer.split(' ');
+    data[data.size()-1].chop(2);
+    for (int i = 0; i < data.size(); i++) {
+        qDebug() << data[i] << " ";
+    }
+    if (data[1] == "auth")
+        authVer(data[2].toInt());
+    else if (data[1] == "get_task")
+        selectTaskVer(data[2].toInt(), data[3].toInt(), data[4]);
 }

@@ -18,11 +18,13 @@ public:
 public slots:
     ///
     /// \brief selectTask
-    /// \param task
+    /// \param task Номер задания.
+    /// \param seed Вариант задания.
+    /// \param task_text Текст задания.
     ///
     /// Принимает информацию о задании.
     ///
-    void selectTask(int task, int seed);
+    void selectTask(int task, int seed, QString task_text);
 
 signals:
     ///

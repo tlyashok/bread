@@ -1,5 +1,6 @@
 #include "authform.h"
 #include "ui_authform.h"
+#include "singleclient.h"
 
 authForm::authForm(QWidget *parent) :
     QWidget(parent),

@@ -22,7 +22,7 @@ signals:
     /// \brief selectTask
     /// \param task
     ///
-    /// Вызвывет выбор задания и переход к taskForm.
+    /// Вызывавет выбор задания и переход к taskForm.
     ///
     void selectTask(int task);
 

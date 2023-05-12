@@ -1,5 +1,7 @@
 #include "mainform.h"
 #include "ui_mainform.h"
+#include "singleclient.h"
+#include <QDebug>
 
 mainForm::mainForm(QWidget *parent) :
     QWidget(parent),
@@ -47,4 +49,3 @@ void mainForm::on_pushButton_task5_clicked()
 {
     emit this->selectTask(5);
 }
-
