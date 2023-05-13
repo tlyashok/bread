@@ -34,7 +34,8 @@ void Client::auth(QString login, QString password)
 {
     user_login = login;
     user_pass = password;
-    SingletonClient::getInstance()->sendToServer("auth " + login + " " + password + "\n");
+    SingletonClient::getInstance()->sendToServer("user_logout " + login + " " + password);
+    SingletonClient::getInstance()->sendToServer("auth " + login + " " + password);
 }
 
 void Client::reg(QString login, QString password, bool studentOrTeacher, QString teacherCode)
@@ -64,10 +65,13 @@ void Client::sendAnswer(int task, int seed, QString answer)
 
 void Client::authVer(int result)
 {
+    qDebug() << "HEre1!!!\n";
     if (result == 1)
     {
+        qDebug() << "HEre2!!!\n";
         this->qsw->setCurrentIndex(1);
         auth_stat = true;
+        qDebug() << "HEre3!!!\n";
     }
 }
 
@@ -79,13 +83,13 @@ void Client::selectTaskVer(int task, int seed, QString task_text)
 
 void Client::parser(QString serv_answer)
 {
-    QStringList data = serv_answer.split(' ');
-    data[data.size()-1].chop(2);
-    for (int i = 0; i < data.size(); i++) {
+    QStringList data = serv_answer.split(" ");
+    qDebug() << "segmented_data: ";
+    for (int i = 0; i < data.size(); i++)
         qDebug() << data[i] << " ";
-    }
-    if (data[1] == "auth")
-        authVer(data[2].toInt());
-    else if (data[1] == "get_task")
-        selectTaskVer(data[2].toInt(), data[3].toInt(), data[4]);
+    qDebug() << "\n";
+    if (data[0] == "auth" && data[1] == "1")
+        authVer(data[1].toInt());
+    else if (data[0] == "get_task")
+        selectTaskVer(data[1].toInt(), data[2].toInt(), data[3]);
 }

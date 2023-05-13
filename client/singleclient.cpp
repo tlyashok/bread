@@ -16,15 +16,22 @@ SingletonClient::SingletonClient()
 void SingletonClient::slot_readFromServer()
 {
     QString data;
+    QStringList datas;
     while(socket->bytesAvailable()>0) {
         data.append(socket->readAll());
     }
-    emit this->serverAnswer(data);
-    qDebug() << data;
+    if (data.size() > 0) {
+        qDebug() << "data: " << data << "\n";
+        datas = data.split("\n");
+        for (int i = 0; i < datas.size(); i++) {
+            qDebug() << "datas["<<i<<"]: " << datas[i] << "\n";
+            emit this->serverAnswer(datas[i]);
+        }
+    }
 }
 
 bool SingletonClient::sendToServer(QString answer)
 {
-    socket->write(answer.toUtf8());
+    socket->write((answer+QString("\n")).toUtf8());
     return 0;
 }
