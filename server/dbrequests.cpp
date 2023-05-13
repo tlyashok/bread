@@ -93,7 +93,6 @@ bool DBRequests::check_auth(int userKey)
     return false;
 }
 
-
 bool DBRequests::reg(QString login, QString password, int userType, QString loginTeacher)
 {
     QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
