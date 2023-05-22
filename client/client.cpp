@@ -34,6 +34,8 @@ void Client::auth(QString login, QString password)
 {
     user_login = login;
     user_pass = password;
+    SingletonClient::getInstance()->sendToServer("user_logout " + login + " " + password + "\n");
+
     SingletonClient::getInstance()->sendToServer("auth " + login + " " + password + "\n");
 }
 

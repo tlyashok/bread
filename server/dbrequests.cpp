@@ -158,7 +158,7 @@ bool DBRequests::user_logout(QString login, QString password)
     } else {
         DataBase::getInstance()->db_request(
                  QString("update Users "
-                         "set connection_id = null"
+                         "set connection_id = null "
                          "where login = '%1' and password = '%2'").arg(login, password));
         return true;
     }
