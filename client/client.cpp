@@ -34,8 +34,7 @@ void Client::auth(QString login, QString password)
 {
     user_login = login;
     user_pass = password;
-    SingletonClient::getInstance()->sendToServer("user_logout " + login + " " + password);
-    SingletonClient::getInstance()->sendToServer("auth " + login + " " + password);
+    SingletonClient::getInstance()->sendToServer("auth " + login + " " + password + "\n");
 }
 
 void Client::reg(QString login, QString password, bool studentOrTeacher, QString teacherCode)

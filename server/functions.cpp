@@ -9,27 +9,28 @@ QByteArray Functions::wrong_user_message() {
 
 QByteArray Functions::auth(QString login, QString password, int userKey)
 {
+    qDebug() << "!!!!\n";
     bool authSuccess = DBRequests::getInstance()->auth(login, password, userKey);
-    return QByteArray(QString(QString::number(authSuccess)).toUtf8());
+    return QByteArray((QString("auth ")+QString::number(authSuccess)).toUtf8());
 }
 
 QByteArray Functions::reg(QString login, QString password, int userType, QString loginTeacher)
 {
     bool regSuccess = DBRequests::getInstance()->reg(login, password, userType, loginTeacher);
-    return QByteArray(QString(QString::number(regSuccess)).toUtf8());
+    return QByteArray((QString("reg ")+QString::number(regSuccess)).toUtf8());
 }
 
 QByteArray Functions::check_auth(int userKey)
 {
     bool checkAuthSucces = DBRequests::getInstance()->check_auth(userKey);
-    return QByteArray(QString(QString::number(checkAuthSucces)).toUtf8());
+    return QByteArray((QString("check_auth ")+QString::number(checkAuthSucces)).toUtf8());
 }
 
 QByteArray Functions::task_is_done(int userKey, int taskNumber, int taskKey, QString answer)
 {
     bool isAnswerCorrect = check_task(taskNumber, taskKey, answer);
     DBRequests::getInstance()->task_is_done(userKey, taskNumber, taskKey, isAnswerCorrect);
-    return QByteArray(QString(QString::number(isAnswerCorrect)).toUtf8());
+    return QByteArray((QString("task_is_done ")+QString::number(isAnswerCorrect)).toUtf8());
 }
 
 QByteArray Functions::reset_connections()
@@ -40,8 +41,8 @@ QByteArray Functions::reset_connections()
 
 QByteArray Functions::user_logout(QString login, QString password)
 {
-    bool checkLogoutSucces = DBRequests::getInstance()->user_logout(login, password);
-    return QByteArray(QString(QString::number(checkLogoutSucces)).toUtf8());
+    bool checkLogoutSuccess = DBRequests::getInstance()->user_logout(login, password);
+    return QByteArray(QString(QString::number(checkLogoutSuccess)).toUtf8());
 }
 
 QByteArray Functions::del_group(QString loginTeacher)
@@ -75,6 +76,17 @@ QByteArray Functions::get_students_list(int userKey)
     }
 }
 
+QByteArray Functions::get_task(int taskNumber)
+{
+    return QByteArray((QString("get_task ")+QString::number(taskNumber)+QString(" 12345 taskText")).toUtf8());
+}
+
+bool Functions::check_task(int taskNumber, int taskKey, QString answer)
+{
+    return true;
+}
+
+
 QByteArray Functions::get_statistics(int userKey, QString studentLogin, int taskNumber)
 {
     return QByteArray(DBRequests::getInstance()->get_statistics(userKey,studentLogin,taskNumber).toUtf8());
@@ -90,7 +102,6 @@ QByteArray Functions::get_statistics(int userKey, QString studentLogin, int task
 
 QByteArray Functions::parse(QString userMessage) {
     QStringList data = userMessage.split(' ');
-    data[data.size()-1].chop(2);
     int descriptor = data[0].toInt();
     for (int i = 0; i < data.size(); i++) {
         qDebug() << data[i] << " ";
@@ -99,6 +110,7 @@ QByteArray Functions::parse(QString userMessage) {
         qDebug() << "Неверная команда от сервера.";
         return QByteArray(QString("invalid_command").toUtf8());
     }
+    qDebug() << '\n';
     if (data[1] == "reg") {
         return reg(data[2], data[3], data[4].toInt(), data[5]);
     } else if (data[1] == "auth") {
@@ -109,7 +121,7 @@ QByteArray Functions::parse(QString userMessage) {
         return reset_connections();
     } else if (data[1] ==  "task") {
         return task_is_done(descriptor, data[2].toInt(), data[3].toInt(), data[4]);
-    } else if (data[1] ==  "logout") {
+    } else if (data[1] ==  "user_logout") {
         return user_logout(data[2], data[3]);
     } else if (data[1] == "get_task") {
         return get_task(data[2].toInt());
@@ -124,17 +136,4 @@ QByteArray Functions::parse(QString userMessage) {
     } else {
         return wrong_user_message();
     }
-    qDebug() << '\n';
-}
-
-
-
-QByteArray Functions::get_task(int taskNumber)
-{
-    return "12345 taskText";
-}
-
-bool Functions::check_task(int taskNumber, int taskKey, QString answer)
-{
-    return true;
 }

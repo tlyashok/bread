@@ -8,7 +8,7 @@ SingletonClient::~SingletonClient()
 SingletonClient::SingletonClient()
 {
     socket = new QTcpSocket(this);
-    socket->connectToHost("172.23.48.246", 33333);
+    socket->connectToHost("127.0.0.1", 33333);
     connect(socket, &QTcpSocket::readyRead, this, &SingletonClient::slot_readFromServer);
     qDebug() << "Клиент запущен";
 }

@@ -39,14 +39,20 @@ void MyTcpServer::slotNewConnection(){
 void MyTcpServer::slotServerRead(){
     QTcpSocket* socket = (QTcpSocket*)sender();
     QString data;
+    QByteArray response;
     while(socket->bytesAvailable()>0) {
-        data.append(socket->readAll());
+        data.append(socket->readLine());
     }
     if (data.size() > 0 && data.back() == '\n') {
-        data = QString::number(socket->socketDescriptor()) + " " + data;
-        socket->write(Functions::getInstance()->parse(data));
-        qDebug() << data << '\n';
-        data.clear();
+        QStringList datas = data.split("\n");
+        for (int i = 0; i < datas.size(); i++) {
+            data = QString::number(socket->socketDescriptor()) + " " + datas[i];
+            qDebug() << "data: " << data << '\n';
+            response = Functions::getInstance()->parse(data);
+            qDebug() << "response: "<< response << '\n';
+            socket->write(response+"\n");
+            data.clear();
+        }
     }
 }
 
