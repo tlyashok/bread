@@ -74,13 +74,26 @@ void Client::sendAnswer(int task, int seed, QString answer)
 
 void Client::authVer(int result)
 {
-    qDebug() << "HEre1!!!\n";
     if (result == 1)
     {
-        qDebug() << "HEre2!!!\n";
         this->qsw->setCurrentIndex(1);
         auth_stat = true;
-        qDebug() << "HEre3!!!\n";
+    }
+    else
+    {
+        QMessageBox qmb;
+        qmb.setText("При авторизации произошла ошибка!");
+        qmb.exec();
+    }
+}
+
+void Client::regVer(int result)
+{
+    if (result == 0)
+    {
+        QMessageBox qmb;
+        qmb.setText("При регистрации произошла ошибка!");
+        qmb.exec();
     }
 }
 
@@ -97,8 +110,10 @@ void Client::parser(QString serv_answer)
     for (int i = 0; i < data.size(); i++)
         qDebug() << data[i] << " ";
     qDebug() << "\n";
-    if (data[0] == "auth" && data[1] == "1")
+    if (data.size() == 2 and data[0] == "auth")
         authVer(data[1].toInt());
-    else if (data[0] == "get_task")
+    if (data.size() == 2 and data[0] == "reg")
+        authVer(data[1].toInt());
+    else if (data.size() == 4 and data[0] == "get_task")
         selectTaskVer(data[1].toInt(), data[2].toInt(), data[3]);
 }

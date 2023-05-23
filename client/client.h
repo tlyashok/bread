@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QCloseEvent>
+#include <QMessageBox>
 #include "mainform.h"
 #include "authform.h"
 #include "taskform.h"
@@ -52,6 +53,13 @@ private:
     /// Проверка результата запроса на авторизацию
     ///
     void authVer(int result);
+    ///
+    /// \brief regVer
+    /// \param result
+    ///
+    /// Проверка результата запроса на регистрацию
+    ///
+    void regVer(int result);
     ///
     /// \brief selectTaskVer
     /// \param task Текст задачи
