@@ -104,7 +104,7 @@ bool DBRequests::reg(QString login, QString password, int userType, QString logi
     // Добавляем нового пользователя в базу данных.
     } else {
         DataBase::getInstance()->db_request(QString("insert into Users(user_type,login, password, connection_id) "
-                                                    "values (%1, '%2', '%3')").arg(QString::number(userType), login, password, ""));
+                                                    "values (%1, '%2', '%3', '%4')").arg(QString::number(userType), login, password, ""));
         QVector<QMap<QString, QString>> current_user =
                 DataBase::getInstance()->db_request(QString("select * from Users "
                                                             "where login = '%1' and password = '%2'").arg(login, password));
