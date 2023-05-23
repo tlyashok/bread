@@ -56,10 +56,9 @@ bool DBRequests::auth(QString login, QString password, int userKey)
      * если да и он не совпадает с нашим, то авторизация не успешна,
      * если нет, то присваиваем ему userKey и сообщаем, что авторизация успешна. */
     } else {
-        if (answer[0]["connection_id"] != "" and answer[0]["connection_id"] == QString::number(userKey)) {
+        qDebug() << userKey << " connection_id: " << answer[0]["connection_id"] << "\n";
+        if (answer[0]["connection_id"] == QString::number(userKey)) {
             return true;
-        } else if (answer[0]["connection_id"] != "" and answer[0]["connection_id"] != QString::number(userKey)) {
-            return false;
         } else if (answer[0]["connection_id"] == "") {
             DataBase::getInstance()->db_request(
                             QString("update Users "
@@ -67,6 +66,7 @@ bool DBRequests::auth(QString login, QString password, int userKey)
                                     "where login = '%2' and password = '%3'").arg(QString::number(userKey), login, password));
             return true;
         }
+        return false;
     }
     qDebug() << "Что-то пошло не так." << '\n';
     return false;
@@ -103,8 +103,8 @@ bool DBRequests::reg(QString login, QString password, int userType, QString logi
         return false;
     // Добавляем нового пользователя в базу данных.
     } else {
-        DataBase::getInstance()->db_request(QString("insert into Users(user_type,login, password) "
-                                                    "values (%1, '%2', '%3')").arg(QString::number(userType), login, password));
+        DataBase::getInstance()->db_request(QString("insert into Users(user_type,login, password, connection_id) "
+                                                    "values (%1, '%2', '%3')").arg(QString::number(userType), login, password, ""));
         QVector<QMap<QString, QString>> current_user =
                 DataBase::getInstance()->db_request(QString("select * from Users "
                                                             "where login = '%1' and password = '%2'").arg(login, password));
@@ -131,7 +131,7 @@ void DBRequests::reset_connections()
 {
     // Удаляет дескрипторы соединений для всех пользователей.
     DataBase::getInstance()->db_request(QString("update Users "
-                                                "set connection_id = null"));
+                                                "set connection_id = \"\""));
 }
 
 void DBRequests::task_is_done(int userKey, int taskNumber, int taskKey, bool isCorrect)

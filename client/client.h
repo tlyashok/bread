@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QMainWindow>
 #include <QStackedWidget>
+#include <QCloseEvent>
 #include "mainform.h"
 #include "authform.h"
 #include "taskform.h"
@@ -59,6 +60,13 @@ private:
     /// Получение текста задачи и сида (варианта задания)
     ///
     void selectTaskVer(int task, int seed, QString task_text);
+    ///
+    /// \brief closeEvent
+    /// \param event
+    ///
+    /// Переопределение события закрытия окна
+    ///
+    void closeEvent(QCloseEvent* event);
 
 signals:
     ///
@@ -93,7 +101,7 @@ private slots:
     ///
     /// \brief exit
     ///
-    /// Принимает сигнал из mainForm, закрывает программу.
+    /// Принимает сигнал из mainForm, выходит на страницу авторизации.
     ///
     void exit();
     ///

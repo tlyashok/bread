@@ -34,33 +34,41 @@ void Client::auth(QString login, QString password)
 {
     user_login = login;
     user_pass = password;
-    SingletonClient::getInstance()->sendToServer("user_logout " + login + " " + password + "\n");
+    // SingletonClient::getInstance()->sendToServer("user_logout " + login + " " + password);
 
-    SingletonClient::getInstance()->sendToServer("auth " + login + " " + password + "\n");
+    SingletonClient::getInstance()->sendToServer("auth " + login + " " + password);
 }
 
 void Client::reg(QString login, QString password, bool studentOrTeacher, QString teacherCode)
 {
     // Если тип учетной записи - преподаватель, то teacherCode пустой, это может вызвать ошибку на сервере
-    SingletonClient::getInstance()->sendToServer("reg " + login + " " + password + " " + QString::number(int(studentOrTeacher)) + " " + teacherCode + "\n");
+    SingletonClient::getInstance()->sendToServer("reg " + login + " " + password + " " + QString::number(int(studentOrTeacher)) + " " + teacherCode);
 }
 
 void Client::exit()
 {
     if (auth_stat)
-        SingletonClient::getInstance()->sendToServer("user_logout " + user_login + " " + user_pass + "\n");
+        SingletonClient::getInstance()->sendToServer("user_logout " + user_login + " " + user_pass);
+    auth_stat = false;
+    this->qsw->setCurrentIndex(0);
+}
+
+void Client::closeEvent(QCloseEvent *event)
+{
+    if (auth_stat)
+        SingletonClient::getInstance()->sendToServer("user_logout " + user_login + " " + user_pass);
     SingletonClient::getInstance()->~SingletonClient();
-    this->close();
+    event->accept();
 }
 
 void Client::selectTask(int task)
 {
-    SingletonClient::getInstance()->sendToServer("get_task " + QString::number(task) + "\n");
+    SingletonClient::getInstance()->sendToServer("get_task " + QString::number(task));
 }
 
 void Client::sendAnswer(int task, int seed, QString answer)
 {
-    SingletonClient::getInstance()->sendToServer("task " + QString::number(task) + " " + QString::number(seed) + " " + answer + "\n");
+    SingletonClient::getInstance()->sendToServer("task " + QString::number(task) + " " + QString::number(seed) + " " + answer);
     this->qsw->setCurrentIndex(1);
 }
 
