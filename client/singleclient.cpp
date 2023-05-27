@@ -1,3 +1,7 @@
+#include <QApplication>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QTcpSocket>
 #include "singleclient.h"
 
 SingletonClient::~SingletonClient()
@@ -8,7 +12,40 @@ SingletonClient::~SingletonClient()
 SingletonClient::SingletonClient()
 {
     socket = new QTcpSocket(this);
-    socket->connectToHost("127.0.0.1", 33333);
+    while (true) {
+        // Запрос IP-адреса с помощью диалогового окна
+        QString ipAddress = QInputDialog::getText(nullptr, "Подключение к серверу",
+                                                  "Введите IP-адрес сервера:");
+
+        if (ipAddress.isEmpty()) {
+            ipAddress = "127.0.0.1"; // Установка значения по умолчанию
+        }
+
+        // Создание сокета TCP
+        socket->connectToHost(ipAddress, 33333);  // Подключение к серверу на указанном порту
+
+        // Проверка успешности подключения
+        if (socket->waitForConnected()) {
+            // Успешное подключение
+            QMessageBox::information(nullptr, "Успех", "Успешное подключение к серверу!");
+            break;  // Выход из цикла while
+        } else {
+            // Ошибка подключения
+            QMessageBox::critical(nullptr, "Ошибка", "Не удалось подключиться к серверу!");
+
+            // Диалоговое окно с вопросом о повторной попытке подключения
+            QMessageBox retryMessageBox;
+            retryMessageBox.setText("Повторить попытку подключения?");
+            retryMessageBox.setStandardButtons(QMessageBox::Retry | QMessageBox::Cancel);
+            retryMessageBox.setDefaultButton(QMessageBox::Retry);
+            int choice = retryMessageBox.exec();
+
+            if (choice == QMessageBox::Cancel) {
+                // Отмена - выход из цикла while
+                break;
+            }
+        }
+    }
     connect(socket, &QTcpSocket::readyRead, this, &SingletonClient::slot_readFromServer);
     qDebug() << "Клиент запущен";
 }

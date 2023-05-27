@@ -50,8 +50,16 @@ void authForm::on_pushButton_auth_or_reg_clicked()
                        this->ui->lineEdit_password->text(),
                        this->studentOrTeacher,
                        this->ui->lineEdit_teacher_code->text());
+    else {
+        emit this->auth(this->ui->lineEdit_login->text(),
+                    this->ui->lineEdit_password->text());
+    }
+}
+
+void authForm::auth_user()
+{
     emit this->auth(this->ui->lineEdit_login->text(),
-                   this->ui->lineEdit_password->text());
+                this->ui->lineEdit_password->text());
 }
 
 void authForm::on_pushButton_regtype_clicked()

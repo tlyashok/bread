@@ -5,9 +5,9 @@ Client::Client(QWidget* parent)
     : QMainWindow(parent)
 {
     this->qsw = new QStackedWidget();
-    this->mf = new mainForm();
-    this->af = new authForm();
-    this->tf = new taskForm();
+    this->mf = mainForm::getInstance();
+    this->af = authForm::getInstance();
+    this->tf = taskForm::getInstance();
 
     connect(af, af->reg, this, this->reg);
     connect(af, af->auth, this, this->auth);
@@ -110,10 +110,15 @@ void Client::parser(QString serv_answer)
     for (int i = 0; i < data.size(); i++)
         qDebug() << data[i] << " ";
     qDebug() << "\n";
-    if (data.size() == 2 and data[0] == "auth")
+    if (data.size() == 2 and data[0] == "auth") {
         authVer(data[1].toInt());
-    if (data.size() == 2 and data[0] == "reg")
-        authVer(data[1].toInt());
+    }
+    if (data.size() == 2 and data[0] == "reg") {
+        regVer(data[1].toInt());
+        if (data[1].toInt() == 1) {
+            af->auth_user();
+        }
+    }
     else if (data.size() == 4 and data[0] == "get_task")
         selectTaskVer(data[1].toInt(), data[2].toInt(), data[3]);
 }

@@ -2,18 +2,20 @@
 #define TASKFORM_H
 
 #include <QWidget>
+#include "singleton.h"
 
 namespace Ui {
 class taskForm;
 }
 
-class taskForm : public QWidget
+class taskForm : public QWidget, public Singleton<taskForm>
 {
     Q_OBJECT
 
-public:
+private:
     explicit taskForm(QWidget *parent = nullptr);
     ~taskForm();
+    friend class Singleton<taskForm>;
 
 public slots:
     ///
