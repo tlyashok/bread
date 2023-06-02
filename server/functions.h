@@ -5,6 +5,7 @@
 
 #include "singleton.h"
 #include "dbrequests.h"
+#include "taskmanager.h"
 
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H

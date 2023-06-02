@@ -2,6 +2,12 @@
 #define TASKMANAGER_H
 
 #include <QString>
+#include <QVector>
+#include <QSet>
+#include <QDebug>
+
+#include <cstdlib>
+#include <ctime>
 
 #include "singleton.h"
 

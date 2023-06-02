@@ -11,26 +11,26 @@ QByteArray Functions::auth(QString login, QString password, int userKey)
 {
     qDebug() << "!!!!\n";
     bool authSuccess = DBRequests::getInstance()->auth(login, password, userKey);
-    return QByteArray((QString("auth ")+QString::number(authSuccess)).toUtf8());
+    return QByteArray((QString("auth$")+QString::number(authSuccess)).toUtf8());
 }
 
 QByteArray Functions::reg(QString login, QString password, int userType, QString loginTeacher)
 {
     bool regSuccess = DBRequests::getInstance()->reg(login, password, userType, loginTeacher);
-    return QByteArray((QString("reg ")+QString::number(regSuccess)).toUtf8());
+    return QByteArray((QString("reg$")+QString::number(regSuccess)).toUtf8());
 }
 
 QByteArray Functions::check_auth(int userKey)
 {
     bool checkAuthSucces = DBRequests::getInstance()->check_auth(userKey);
-    return QByteArray((QString("check_auth ")+QString::number(checkAuthSucces)).toUtf8());
+    return QByteArray((QString("check_auth$")+QString::number(checkAuthSucces)).toUtf8());
 }
 
 QByteArray Functions::task_is_done(int userKey, int taskNumber, int taskKey, QString answer)
 {
     bool isAnswerCorrect = check_task(taskNumber, taskKey, answer);
     DBRequests::getInstance()->task_is_done(userKey, taskNumber, taskKey, isAnswerCorrect);
-    return QByteArray((QString("task_is_done ")+QString::number(isAnswerCorrect)).toUtf8());
+    return QByteArray((QString("task_is_done$")+QString::number(isAnswerCorrect)).toUtf8());
 }
 
 QByteArray Functions::reset_connections()
@@ -78,7 +78,7 @@ QByteArray Functions::get_students_list(int userKey)
 
 QByteArray Functions::get_task(int taskNumber)
 {
-    return QByteArray((QString("get_task ")+QString::number(taskNumber)+QString(" 12345 taskText")).toUtf8());
+    return QByteArray(TaskManager::getInstance()->create_task(taskNumber).toUtf8());
 }
 
 bool Functions::check_task(int taskNumber, int taskKey, QString answer)

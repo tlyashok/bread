@@ -105,7 +105,7 @@ void Client::selectTaskVer(int task, int seed, QString task_text)
 
 void Client::parser(QString serv_answer)
 {
-    QStringList data = serv_answer.split(" ");
+    QStringList data = serv_answer.split("$");
     qDebug() << "segmented_data: ";
     for (int i = 0; i < data.size(); i++)
         qDebug() << data[i] << " ";
