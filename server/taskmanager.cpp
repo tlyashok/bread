@@ -40,6 +40,14 @@ QString TaskManager::create_task(int taskNumber)
         taskText += ". Найдите длину самого короткого путя от вершины 1 до вершины 8.";
         return QString("get_task") + "$" + QString("2") + "$" + QString::number(genKey) + "$" + taskText;
         break;
+    case 3:
+        taskText =
+                "Дан граф, состоящий из 8 вершин. Все вершины пронумерованы от 1 до 8. "
+                "Граф задан ориентированными рёбрами с пропускной способностью, приведёнными ниже: ";
+        taskText += create_task3(genKey);
+        taskText+= ". Найдите максимальный поток от вершины 1 (исток) к вершине 8 (сток).";
+        return QString("get_task") + "$" + QString("3") + "$" + QString::number(genKey) + "$" + taskText;
+        break;
     default:
         return create_task1(1); // В непредвиденном случае будет создаваться задание с ключом 1
         break;
@@ -53,6 +61,8 @@ bool TaskManager::check_task(int taskNumber, int taskKey, QString answer)
         return check_task1(taskKey, answer);
     case 2:
         return check_task2(taskKey, answer);
+    case 3:
+        return check_task3(taskKey, answer);
     default:
         return false; // В непредвиденном случае будет создаваться задание с ключом 1
     }
@@ -272,3 +282,249 @@ bool TaskManager::check_task2(int taskKey, QString answer)
         return false;
     }
 }
+
+//Функции и классы для третьего задания (Лещинский Р.А.)
+
+struct Edge
+{
+    // Поток и макс.пропускная способность ребра
+    int flow, capacity;
+
+    // Ребро u--->v от ребра u
+    // к ребру v.
+    int u, v;
+
+    Edge(int flow, int capacity, int u, int v)
+    {
+        this->flow = flow;
+        this->capacity = capacity;
+        this->u = u;
+        this->v = v;
+    }
+};
+
+struct Vertex
+{
+    int h, e_flow;
+
+    Vertex(int h, int e_flow)
+    {
+        this->h = h;
+        this->e_flow = e_flow;
+    }
+};
+
+int  over_flow_vertex(QVector<Vertex>& ver)
+{
+    for (int i = 1; i < ver.size() - 1; i++)
+       if (ver[i].e_flow > 0)
+            return i;
+
+    return -1;
+}
+
+class Graph
+{
+    int V;    // Количество вершин
+    QVector<Vertex> ver;
+    QVector<Edge> edge;
+
+    bool push(int u)
+    {
+        // Проходим по всем рёбрам в поисках соседей, куда можно протолкну избыток
+        for (int i = 0; i < edge.size(); i++)
+        {
+            // Проверка, что у ребра исток равен нашей вершине
+            if (edge[i].u == u)
+            {
+                // Если поток по ребру равен пропускной способности, то протолкнуть больше не можем
+                if (edge[i].flow == edge[i].capacity)
+                    continue;
+
+                // Проверка, что высота стока ребра меньше истока
+                if (ver[u].h > ver[edge[i].v].h)
+                {
+                    int flow = std::min(edge[i].capacity - edge[i].flow,
+                                   ver[u].e_flow);
+
+                    ver[u].e_flow -= flow;
+
+                    ver[edge[i].v].e_flow += flow;
+
+                    edge[i].flow += flow;
+
+                    //Добавление обратного ребра в остаточный граф
+                    update_reverse_edge_flow(i, flow);
+
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void relabel(int u)
+    {
+        // Для хранения минимальной высоты среди высот соседних вершин-стоков
+        int mh = INT_MAX;
+
+        // Поиск соседа-стока с минимальной высотой
+        for (int i = 0; i < edge.size(); i++)
+        {
+            if (edge[i].u == u)
+            {
+                // Если поток равен пропускной способности, то не учитываем вершину
+                if (edge[i].flow == edge[i].capacity)
+                    continue;
+
+                // Изменение высоты
+                if (ver[edge[i].v].h < mh)
+                {
+                    mh = ver[edge[i].v].h;
+                    ver[u].h = mh + 1;
+                }
+            }
+        }
+    }
+
+    void preflow(int s)
+    {
+        // Устанавливаем высоту истока равной ко-ву вершин в графе
+        ver[s].h = ver.size();
+
+        //
+        for (int i = 0; i < edge.size(); i++)
+        {
+            // Если вершины исходит из истока
+            if (edge[i].u == s)
+            {
+                // Поток ребра приравниваем пропускной способности
+                edge[i].flow = edge[i].capacity;
+
+                // Делаем избыток вершин равным потоку
+                ver[edge[i].v].e_flow += edge[i].flow;
+
+                // Добавление обратные рёбра в остаточный граф с пропускной способностью 0
+                edge.push_back(Edge(-edge[i].flow, 0, edge[i].v, s));
+            }
+        }
+    }
+
+    void update_reverse_edge_flow(int i, int flow)
+    {
+        int u = edge[i].v, v = edge[i].u;
+
+        for (int j = 0; j < edge.size(); j++)
+        {
+            if (edge[j].v == v && edge[j].u == u)
+            {
+                edge[j].flow -= flow;
+                return;
+            }
+        }
+
+        // Добавление обратного рёбра в остаточный граф
+        Edge e = Edge(0, flow, u, v);
+        edge.push_back(e);
+    }
+
+public:
+    Graph(int V)
+    {
+        this->V = V;
+
+        // У всех вершин по умолчанию 0 избытка и 0 высота
+        for (int i = 0; i < V; i++)
+            ver.push_back(Vertex(0, 0));
+    }
+
+    void add_edge(int u, int v, int capacity)
+    {
+        // У всех рёбер изначально поток равен 0
+        edge.push_back(Edge(0, capacity, u, v));
+    }
+
+    int get_max_flow(int s)
+    {
+        preflow(s);
+
+        // Цикл до тех пор, пока не исчезнут все избытки у вершин
+        while (over_flow_vertex(ver) != -1)
+        {
+            int u = over_flow_vertex(ver);
+            if (!push(u))
+                relabel(u);
+        }
+
+        // Возврат избытка последней вершины
+        return ver.back().e_flow;
+    }
+};
+
+int max_flow_search(QVector<QVector<int>> mass)
+{
+    int V = mass.back()[1] + 1;
+    Graph g(V);
+
+    for (int i = 0; i < mass.size(); i++)
+        g.add_edge(mass[i][0], mass[i][1], mass[i][2]);
+    int s = 0;
+
+    return g.get_max_flow(s);
+}
+
+QVector<QVector<int>> graph_generator(int key){
+    srand(key);
+    QVector<QVector<int>> mass;
+    QVector<int> b;
+    int ranges = 7;
+    for (int i = 0; i < ranges; i++){
+        b.append(i);
+        b.append(i + 1);
+        b.append(rand() % 10 + 5);
+        mass.append(b);
+        b.clear();
+        for (int j = i + 1; j < ranges; j++){
+            if (rand() % 10 > 4)
+            {
+                b.append(i);
+                b.append(j + 1);
+                b.append(rand() % 10 + 5);
+                mass.append(b);
+                b.clear();
+            }
+        }
+    }
+    return mass;
+}
+
+bool TaskManager::check_task3(int taskKey, QString answer)
+{
+    try {
+        return (answer.toInt() == max_flow_search(graph_generator(taskKey)));
+
+    } catch (...) {
+
+        qDebug() << "Ошибка во время проверки задания." << "\n";
+        return false;
+    }
+}
+
+QString create_task3(int taskKey)
+{
+    QVector<QVector<int>> i_edges = graph_generator(taskKey); //(вершина, вершина, пропускная способность) x 6
+
+    QString edges = "E = {"; // Вершины слитно, через пробел пропускная способность x 6
+
+    for (int i = 0; i < i_edges.size(); i++){
+        edges += "(" + QString::number(i_edges[i][0] + 1) + ", " + QString::number(i_edges[i][1] + 1) + ", " + QString::number(i_edges[i][2]) + ")";
+        if (i != i_edges.size() - 1)
+            edges += ", ";
+    }
+
+    edges += "}";
+
+    return edges;
+}
+
+//Конец функций и классов для третьего задания (Лещинский Р.А.)

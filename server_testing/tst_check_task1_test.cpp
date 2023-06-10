@@ -16,6 +16,19 @@ private slots:
     void test_case2();
 };
 
+class check_task3_test : public QObject
+{
+    Q_OBJECT
+
+public:
+    check_task3_test();
+    ~check_task3_test();
+
+private slots:
+    void test_case1();
+    void test_case2();
+};
+
 check_task1_test::check_task1_test()
 {
 
@@ -37,6 +50,22 @@ void check_task1_test::test_case2()
 {
     QVERIFY2(TaskManager::getInstance()->check_task(1, 1, "12 23") == true,
              "Неверная проверка задачи 1: false. Ожидается - true");
+}
+
+check_task3_test::check_task3_test()
+{
+
+}
+
+check_task3_test::~check_task3_test()
+{
+
+}
+
+void check_task3_test::test_case2()
+{
+    QVERIFY2(TaskManager::getInstance()->check_task(3, 41, "31") == true,
+             "Неверная проверка задачи 3: false. Ожидается - true");
 }
 
 QTEST_APPLESS_MAIN(check_task1_test)
