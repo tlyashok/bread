@@ -510,7 +510,7 @@ bool TaskManager::check_task3(int taskKey, QString answer)
     }
 }
 
-QString create_task3(int taskKey)
+QString TaskManager::create_task3(int taskKey)
 {
     QVector<QVector<int>> i_edges = graph_generator(taskKey); //(вершина, вершина, пропускная способность) x 6
 
