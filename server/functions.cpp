@@ -9,7 +9,6 @@ QByteArray Functions::wrong_user_message() {
 
 QByteArray Functions::auth(QString login, QString password, int userKey)
 {
-    qDebug() << "!!!!\n";
     bool authSuccess = DBRequests::getInstance()->auth(login, password, userKey);
     return QByteArray((QString("auth$")+QString::number(authSuccess)).toUtf8());
 }

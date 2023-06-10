@@ -49,6 +49,7 @@ void MyTcpServer::slotServerRead(){
             datas = data.split("\r\n");
         else
             datas = data.split("\n");
+        datas.pop_back();
         for (int i = 0; i < datas.size(); i++) {
             data = QString::number(socket->socketDescriptor()) + " " + datas[i];
             qDebug() << "data: " << data << '\n';
