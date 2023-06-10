@@ -29,9 +29,9 @@ void authForm::uiReset()
         this->ui->pushButton_switch->setText("Перейти к регистрации");
     }
     if (this->studentOrTeacher)
-        this->ui->pushButton_regtype->setText("Преподаватель");
+        this->ui->pushButton_regtype->setText("Сейчас: преподаватель");
     else
-        this->ui->pushButton_regtype->setText("Студент");
+        this->ui->pushButton_regtype->setText("Сейчас: студент");
     this->ui->pushButton_regtype->setVisible(this->authOrReg);
     this->ui->label_teacher_code->setVisible(this->authOrReg && !this->studentOrTeacher);
     this->ui->lineEdit_teacher_code->setVisible(this->authOrReg && !this->studentOrTeacher);
