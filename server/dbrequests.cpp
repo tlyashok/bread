@@ -40,6 +40,11 @@
 
 bool DBRequests::auth(QString login, QString password, int userKey)
 {
+
+    if (login == "" || password == "")
+        return false;
+    if (login.length() >= 64 || password.length() >= 64)
+        return false;
     // Сперва находим в базе данных пользователя с соответствующим логином и паролем.
     QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
                 QString("select * from Users "
@@ -95,6 +100,10 @@ bool DBRequests::check_auth(int userKey)
 
 bool DBRequests::reg(QString login, QString password, int userType, QString loginTeacher)
 {
+    if (login == "" || password == "" || (!userType && loginTeacher == ""))
+        return false;
+    if (login.length() >= 64 || password.length() >= 64 || (!userType && loginTeacher.length() >= 64))
+        return false;
     QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
                 QString("select * from Users "
                         "where login = '%1'").arg(login));
