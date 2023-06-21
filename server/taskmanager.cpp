@@ -2,7 +2,7 @@
 
 // Все графы имеют 8 вершин
 
-const int GRAPH_SIZE = 3;
+const int GRAPH_SIZE = 8;
 
 struct threeGroup {
     int first, second, third;

@@ -143,15 +143,15 @@ void DBRequests::reset_connections()
                                                 "set connection_id = \"\""));
 }
 
-void DBRequests::task_is_done(int userKey, int taskNumber, int taskKey, bool isCorrect)
+void DBRequests::task_is_done(int userKey, int taskNumber, int taskKey, bool isCorrect, QString answer1)
 {
     QVector<QMap<QString, QString>> answer = DataBase::getInstance()->db_request(
                 QString("select id from Users where connection_id = %1").arg(QString::number(userKey)));
     QString userId = answer[0]["id"];
-    DataBase::getInstance()->db_request(QString("insert into Tasks(user_id, task_id, task_number, is_correct) "
-                                                "values(%1, %2, %3, %4)").arg
+    DataBase::getInstance()->db_request(QString("insert into Tasks(user_id, task_id, task_number, is_correct, answer) "
+                                                "values(%1, %2, %3, %4, '%5')").arg
                                         (userId, QString::number(taskKey),
-                                         QString::number(taskNumber), QString::number(isCorrect)));
+                                         QString::number(taskNumber), QString::number(isCorrect), answer1));
 }
 
 bool DBRequests::user_logout(QString login, QString password)

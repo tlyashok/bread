@@ -28,7 +28,7 @@ QByteArray Functions::check_auth(int userKey)
 QByteArray Functions::task_is_done(int userKey, int taskNumber, int taskKey, QString answer)
 {
     bool isAnswerCorrect = check_task(taskNumber, taskKey, answer);
-    DBRequests::getInstance()->task_is_done(userKey, taskNumber, taskKey, isAnswerCorrect);
+    DBRequests::getInstance()->task_is_done(userKey, taskNumber, taskKey, isAnswerCorrect,answer);
     return QByteArray((QString("task_is_done$")+QString::number(isAnswerCorrect)).toUtf8());
 }
 
@@ -82,7 +82,7 @@ QByteArray Functions::get_task(int taskNumber)
 
 bool Functions::check_task(int taskNumber, int taskKey, QString answer)
 {
-    return true;
+    return TaskManager::getInstance()->check_task(taskNumber, taskKey, answer);
 }
 
 
