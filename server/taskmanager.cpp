@@ -149,9 +149,13 @@ QVector<threeGroup> getWeightedEdgesFromString(QString string) {
 bool TaskManager::check_task1(int taskKey, QString answer)
 {
     try {
+        answer.squeeze();
         QStringList edges = create_task1(taskKey).split(" ");
         QStringList edgesAns = answer.split(" ");
         QVector <QVector <int>> matrix (GRAPH_SIZE, QVector <int> (GRAPH_SIZE, 0));
+        for (int i = 0; i < edgesAns.size(); i++)
+            if (edgesAns[i].size() != 2)
+                edgesAns.remove(i--);
         for (auto i : edges) {
             matrix[i[0].unicode()-'1'][i[1].unicode()-'1'] = 1;
             matrix[i[1].unicode()-'1'][i[0].unicode()-'1'] = 1;
