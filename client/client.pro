@@ -15,7 +15,8 @@ SOURCES += \
     main.cpp \
     mainform.cpp \
     singleclient.cpp \
-    taskform.cpp
+    taskform.cpp \
+    teacherform.cpp
 
 HEADERS += \
     authform.h \
@@ -23,7 +24,8 @@ HEADERS += \
     mainform.h \
     singleclient.h \
     singleton.h \
-    taskform.h
+    taskform.h \
+    teacherform.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -33,4 +35,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 FORMS += \
     authform.ui \
     mainform.ui \
-    taskform.ui
+    taskform.ui \
+    teacherform.ui

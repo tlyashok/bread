@@ -2,12 +2,13 @@
 #define MAINFORM_H
 
 #include <QWidget>
+#include "singleton.h"
 
 namespace Ui {
 class mainForm;
 }
 
-class mainForm : public QWidget
+class mainForm : public QWidget, public Singleton<mainForm>
 {
     Q_OBJECT
 
@@ -26,7 +27,8 @@ signals:
     ///
     void selectTask(int task);
 
-public:
+private:
+    friend class Singleton<mainForm>;
     explicit mainForm(QWidget *parent = nullptr);
     ~mainForm();
 

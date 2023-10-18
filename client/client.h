@@ -4,9 +4,12 @@
 #include <QDebug>
 #include <QMainWindow>
 #include <QStackedWidget>
+#include <QCloseEvent>
+#include <QMessageBox>
 #include "mainform.h"
 #include "authform.h"
 #include "taskform.h"
+#include "teacherform.h"
 
 class Client : public QMainWindow
 {
@@ -20,6 +23,7 @@ private:
     QString user_login;
     QString user_pass;
     bool auth_stat = false;
+    bool is_teacher = false;
     ///
     /// \brief qsw
     ///
@@ -45,12 +49,26 @@ private:
     ///
     taskForm* tf;
     ///
+    /// \brief tef
+    ///
+    /// Форма для просмотра преподавателем статистики по студентам
+    ///
+    teacherForm* tef;
+    ///
     /// \brief authVer
     /// \param result Результат запроса, 0 или 1
+    /// \param isATeacher Является ли пользователь преподавателем
     ///
     /// Проверка результата запроса на авторизацию
     ///
-    void authVer(int result);
+    void authVer(int result, int isATeacher);
+    ///
+    /// \brief regVer
+    /// \param result
+    ///
+    /// Проверка результата запроса на регистрацию
+    ///
+    void regVer(int result);
     ///
     /// \brief selectTaskVer
     /// \param task Текст задачи
@@ -59,6 +77,29 @@ private:
     /// Получение текста задачи и сида (варианта задания)
     ///
     void selectTaskVer(int task, int seed, QString task_text);
+    ///
+    /// \brief getStudentNamesVer
+    /// \param student_names имена студентов, разделенные пробелами
+    ///
+    /// Получение списка имен студентов
+    ///
+    void getStudentNamesVer(QStringList student_names);
+    ///
+    /// \brief getStudentStatisticsVer
+    /// \param name имя студента
+    /// \param task_id номер задания
+    /// \param successes
+    /// \param failures
+    /// \param last_failure
+    ///
+    void getStudentStatisticsVer(QString name, int task_id, int successes, int failures, int last_failure);
+    ///
+    /// \brief closeEvent
+    /// \param event
+    ///
+    /// Переопределение события закрытия окна
+    ///
+    void closeEvent(QCloseEvent* event);
 
 signals:
     ///
@@ -70,6 +111,17 @@ signals:
     /// Отправляется в taskForm, передает полученные номер задания и сид.
     ///
     void selectTaskGenerated(int task, int seed, QString task_text);
+    ///
+    /// \brief sendStudentStatistics
+    /// \param name имя студента
+    /// \param task_id номер задания
+    /// \param successes число правильно выполненных заданий
+    /// \param failures число неверно выполненных заданий
+    /// \param last_failure номер последней ошибки
+    ///
+    /// Отправляется в teacherForm, передает информацию по студентам
+    ///
+    void sendStudentStatistics(QString name, int task_id, int successes, int failures, int last_failure);
 
 private slots:
     ///
@@ -93,7 +145,7 @@ private slots:
     ///
     /// \brief exit
     ///
-    /// Принимает сигнал из mainForm, закрывает программу.
+    /// Принимает сигнал из mainForm, выходит на страницу авторизации.
     ///
     void exit();
     ///

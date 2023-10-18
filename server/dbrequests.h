@@ -45,11 +45,12 @@ public:
     /// \param taskKey Дескриптор уникального варианта задания
     /// \param isCorrect Указывает, нужно ли пометить выполнение задания как верное или нет
     ///
-    void task_is_done(int userKey, int taskNumber, int taskKey, bool isCorrect);
+    void task_is_done(int userKey, int taskNumber, int taskKey, bool isCorrect, QString answer1);
     ///
     /// \brief user_logout Удаляет подключение для пользователя из базы данных
     /// \param login
     /// \param password
+    /// \param answer1
     /// \return 1 - успешно, 0 - пользователь не найден
     ///
     bool user_logout(QString login, QString password);

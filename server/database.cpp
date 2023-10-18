@@ -119,7 +119,7 @@ QVector<QMap<QString, QString>> DataBase::db_request(QString request)
     return result;
 }
 
-void DataBase::printTable(const QList<QMap<QString, QString>>& table)
+void DataBase::printTable(const QVector<QMap<QString, QString>>& table)
 {
     const int columnWidth = 15;
 

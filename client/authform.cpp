@@ -29,9 +29,9 @@ void authForm::uiReset()
         this->ui->pushButton_switch->setText("Перейти к регистрации");
     }
     if (this->studentOrTeacher)
-        this->ui->pushButton_regtype->setText("Преподаватель");
+        this->ui->pushButton_regtype->setText("Сейчас: преподаватель");
     else
-        this->ui->pushButton_regtype->setText("Студент");
+        this->ui->pushButton_regtype->setText("Сейчас: студент");
     this->ui->pushButton_regtype->setVisible(this->authOrReg);
     this->ui->label_teacher_code->setVisible(this->authOrReg && !this->studentOrTeacher);
     this->ui->lineEdit_teacher_code->setVisible(this->authOrReg && !this->studentOrTeacher);
@@ -50,8 +50,16 @@ void authForm::on_pushButton_auth_or_reg_clicked()
                        this->ui->lineEdit_password->text(),
                        this->studentOrTeacher,
                        this->ui->lineEdit_teacher_code->text());
+    else {
+        emit this->auth(this->ui->lineEdit_login->text(),
+                    this->ui->lineEdit_password->text());
+    }
+}
+
+void authForm::auth_user()
+{
     emit this->auth(this->ui->lineEdit_login->text(),
-                   this->ui->lineEdit_password->text());
+                this->ui->lineEdit_password->text());
 }
 
 void authForm::on_pushButton_regtype_clicked()

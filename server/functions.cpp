@@ -9,28 +9,28 @@ QByteArray Functions::wrong_user_message() {
 
 QByteArray Functions::auth(QString login, QString password, int userKey)
 {
-    qDebug() << "!!!!\n";
     bool authSuccess = DBRequests::getInstance()->auth(login, password, userKey);
-    return QByteArray((QString("auth ")+QString::number(authSuccess)).toUtf8());
+    bool isATeacher = DBRequests::getInstance()->is_it_a_teacher(userKey);
+    return QByteArray((QString("auth$")+QString::number(authSuccess)+QString("$")+QString::number(isATeacher)).toUtf8());
 }
 
 QByteArray Functions::reg(QString login, QString password, int userType, QString loginTeacher)
 {
     bool regSuccess = DBRequests::getInstance()->reg(login, password, userType, loginTeacher);
-    return QByteArray((QString("reg ")+QString::number(regSuccess)).toUtf8());
+    return QByteArray((QString("reg$")+QString::number(regSuccess)).toUtf8());
 }
 
 QByteArray Functions::check_auth(int userKey)
 {
     bool checkAuthSucces = DBRequests::getInstance()->check_auth(userKey);
-    return QByteArray((QString("check_auth ")+QString::number(checkAuthSucces)).toUtf8());
+    return QByteArray((QString("check_auth$")+QString::number(checkAuthSucces)).toUtf8());
 }
 
 QByteArray Functions::task_is_done(int userKey, int taskNumber, int taskKey, QString answer)
 {
     bool isAnswerCorrect = check_task(taskNumber, taskKey, answer);
-    DBRequests::getInstance()->task_is_done(userKey, taskNumber, taskKey, isAnswerCorrect);
-    return QByteArray((QString("task_is_done ")+QString::number(isAnswerCorrect)).toUtf8());
+    DBRequests::getInstance()->task_is_done(userKey, taskNumber, taskKey, isAnswerCorrect,answer);
+    return QByteArray((QString("task_is_done$")+QString::number(isAnswerCorrect)).toUtf8());
 }
 
 QByteArray Functions::reset_connections()
@@ -61,6 +61,7 @@ QByteArray Functions::get_students_list(int userKey)
 {
     bool checkTeacher = DBRequests::getInstance()->is_it_a_teacher(userKey);
     QString answer;
+    answer += "get_students_list$";
     if (checkTeacher == false) {
         qDebug() << "Данный пользователь не является преподавателем." << '\n';
         return QByteArray(answer.toUtf8());
@@ -69,7 +70,7 @@ QByteArray Functions::get_students_list(int userKey)
         for (int i = 0; i < studentList.size(); i++) {
             answer += studentList[i];
             if (i != studentList.size()-1) {
-                answer += "$";
+                answer += " ";
             }
         }
         return QByteArray(answer.toUtf8());
@@ -78,18 +79,18 @@ QByteArray Functions::get_students_list(int userKey)
 
 QByteArray Functions::get_task(int taskNumber)
 {
-    return QByteArray((QString("get_task ")+QString::number(taskNumber)+QString(" 12345 taskText")).toUtf8());
+    return QByteArray(TaskManager::getInstance()->create_task(taskNumber).toUtf8());
 }
 
 bool Functions::check_task(int taskNumber, int taskKey, QString answer)
 {
-    return true;
+    return TaskManager::getInstance()->check_task(taskNumber, taskKey, answer);
 }
 
 
 QByteArray Functions::get_statistics(int userKey, QString studentLogin, int taskNumber)
 {
-    return QByteArray(DBRequests::getInstance()->get_statistics(userKey,studentLogin,taskNumber).toUtf8());
+    return QByteArray((QString("get_statistics$")+studentLogin+QString("$")+QString::number(taskNumber)+QString("$")+DBRequests::getInstance()->get_statistics(userKey,studentLogin,taskNumber)).toUtf8());
 }
 
 /*

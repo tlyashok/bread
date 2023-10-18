@@ -41,7 +41,7 @@
    <item row="2" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+      <string>Дан граф, состоящий из 8 вершин. Все вершины пронумерованы от 1 до 8. \nГраф задан неориентированным рёбрами, приведёнными ниже: \n15, 24, 28, 25, 18, 68, 27, 13, 62, 16, 14, 56, 57, 58, 74, 67, 35\nНайдите каркас графа. Задайте его рёбра через пробел.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

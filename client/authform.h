@@ -2,6 +2,7 @@
 #define AUTHFORM_H
 
 #include <QWidget>
+#include "singleton.h"
 
 namespace Ui {
 class authForm;
@@ -12,7 +13,7 @@ class authForm;
 /// Форма авторизации и регистрации.
 /// Открывается при запуске программы.
 ///
-class authForm : public QWidget
+class authForm : public QWidget, public Singleton<authForm>
 {
     Q_OBJECT
 
@@ -37,9 +38,17 @@ signals:
     ///
     void reg(QString login, QString password, bool studentOrTeacher, QString teacherCode);
 
-public:
+private:
+    friend class Singleton<authForm>;
     explicit authForm(QWidget *parent = nullptr);
     ~authForm();
+
+public:
+    ///
+    /// \brief auth_user
+    /// Проводит авторизацию пользователя
+    ///
+    void auth_user();
 
 private slots:
     void on_pushButton_switch_clicked();
@@ -70,7 +79,7 @@ private:
     /// \brief studentOrTeacher
     ///
     /// Хранит тип учетной записи при регистрации:
-    /// Студенти или Преподаватель
+    /// Студент или Преподаватель
     ///
     bool studentOrTeacher;
 };
